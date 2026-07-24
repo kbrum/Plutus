@@ -7,6 +7,7 @@ import {
 	getRequestHeader,
 	setResponseHeaders,
 } from "@tanstack/react-start/server";
+import type { Database } from "./database.types";
 
 export function createSupabaseServerClient() {
 	const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -16,7 +17,7 @@ export function createSupabaseServerClient() {
 		throw new Error("Supabase environment variables are not configured");
 	}
 
-	return createServerClient(supabaseUrl, supabasePublishableKey, {
+	return createServerClient<Database>(supabaseUrl, supabasePublishableKey, {
 		cookies: {
 			getAll() {
 				return parseCookieHeader(getRequestHeader("Cookie") ?? "");

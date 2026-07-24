@@ -24,7 +24,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Plutus — Gestão de crédito",
+			},
+			{
+				name: "theme-color",
+				content: "#070c12",
 			},
 		],
 		links: [
@@ -39,7 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="pt-BR" className="dark">
 			<head>
 				<HeadContent />
 			</head>

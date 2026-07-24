@@ -11,3 +11,18 @@ export async function loginWithPassword(credentials: LoginCredentials) {
 
 	return data.user;
 }
+
+export async function getCurrentUser() {
+	const supabase = createSupabaseServerClient();
+
+	const { data, error } = await supabase.auth.getClaims();
+
+	if (error || !data?.claims) {
+		return null;
+	}
+
+	return {
+		id: data.claims.sub,
+		email: data.claims.email,
+	};
+}
