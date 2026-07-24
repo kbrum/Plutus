@@ -5,7 +5,7 @@ import {
 } from "@supabase/ssr";
 import {
 	getRequestHeader,
-	setResponseHeaders,
+	setResponseHeader,
 } from "@tanstack/react-start/server";
 import type { Database } from "./database.types";
 
@@ -23,20 +23,16 @@ export function createSupabaseServerClient() {
 				return parseCookieHeader(getRequestHeader("Cookie") ?? "");
 			},
 			setAll(cookiesToSet, cacheHeaders) {
-				const responseHeaders = new Headers();
-
-				for (const { name, value, options } of cookiesToSet) {
-					responseHeaders.append(
-						"Set-Cookie",
+				setResponseHeader(
+					"Set-Cookie",
+					cookiesToSet.map(({ name, value, options }) =>
 						serializeCookieHeader(name, value, options),
-					);
-				}
+					),
+				);
 
 				for (const [name, value] of Object.entries(cacheHeaders)) {
-					responseHeaders.set(name, value);
+					setResponseHeader(name, value);
 				}
-
-				setResponseHeaders(responseHeaders);
 			},
 		},
 	});
