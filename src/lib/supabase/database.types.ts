@@ -12,44 +12,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      audit_logs: {
-        Row: {
-          action: string
-          actor_id: string | null
-          created_at: string
-          entity_id: string
-          entity_type: string
-          id: number
-          metadata: Json
-        }
-        Insert: {
-          action: string
-          actor_id?: string | null
-          created_at?: string
-          entity_id: string
-          entity_type: string
-          id?: never
-          metadata?: Json
-        }
-        Update: {
-          action?: string
-          actor_id?: string | null
-          created_at?: string
-          entity_id?: string
-          entity_type?: string
-          id?: never
-          metadata?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_actor_id_fkey"
-            columns: ["actor_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       installments: {
         Row: {
           created_at: string
@@ -101,11 +63,9 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
-          expires_at: string | null
           first_due_date: string
           id: string
           installment_count: number
-          interest_calculation: Database["public"]["Enums"]["interest_calculation"]
           interest_rate: number
           loan_request_id: string
           message: string | null
@@ -116,11 +76,9 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
-          expires_at?: string | null
           first_due_date: string
           id?: string
           installment_count: number
-          interest_calculation?: Database["public"]["Enums"]["interest_calculation"]
           interest_rate: number
           loan_request_id: string
           message?: string | null
@@ -131,11 +89,9 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
-          expires_at?: string | null
           first_due_date?: string
           id?: string
           installment_count?: number
-          interest_calculation?: Database["public"]["Enums"]["interest_calculation"]
           interest_rate?: number
           loan_request_id?: string
           message?: string | null
@@ -227,7 +183,6 @@ export type Database = {
           first_due_date: string
           id: string
           installment_count: number
-          interest_calculation: Database["public"]["Enums"]["interest_calculation"]
           interest_rate: number
           lender_id: string
           loan_request_id: string
@@ -244,7 +199,6 @@ export type Database = {
           first_due_date: string
           id?: string
           installment_count: number
-          interest_calculation: Database["public"]["Enums"]["interest_calculation"]
           interest_rate: number
           lender_id: string
           loan_request_id: string
@@ -261,7 +215,6 @@ export type Database = {
           first_due_date?: string
           id?: string
           installment_count?: number
-          interest_calculation?: Database["public"]["Enums"]["interest_calculation"]
           interest_rate?: number
           lender_id?: string
           loan_request_id?: string
@@ -297,50 +250,6 @@ export type Database = {
             columns: ["loan_request_id"]
             isOneToOne: true
             referencedRelation: "loan_requests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      notifications: {
-        Row: {
-          created_at: string
-          id: string
-          message: string
-          read_at: string | null
-          recipient_id: string
-          resource_id: string | null
-          resource_type: string | null
-          title: string
-          type: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          message: string
-          read_at?: string | null
-          recipient_id: string
-          resource_id?: string | null
-          resource_type?: string | null
-          title: string
-          type: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          message?: string
-          read_at?: string | null
-          recipient_id?: string
-          resource_id?: string | null
-          resource_type?: string | null
-          title?: string
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -408,33 +317,24 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
-          bio: string | null
           created_at: string
           display_name: string
           id: string
           is_active: boolean
-          role: Database["public"]["Enums"]["app_role"]
           updated_at: string
         }
         Insert: {
-          avatar_url?: string | null
-          bio?: string | null
           created_at?: string
           display_name: string
           id: string
           is_active?: boolean
-          role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
         }
         Update: {
-          avatar_url?: string | null
-          bio?: string | null
           created_at?: string
           display_name?: string
           id?: string
           is_active?: boolean
-          role?: Database["public"]["Enums"]["app_role"]
           updated_at?: string
         }
         Relationships: []
@@ -447,9 +347,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      app_role: "user" | "admin"
       installment_status: "pending" | "paid" | "overdue" | "cancelled"
-      interest_calculation: "simple" | "compound"
       loan_proposal_status:
         | "pending"
         | "accepted"

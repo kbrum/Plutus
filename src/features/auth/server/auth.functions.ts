@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { loginSchema } from "../schemas/auth.schemas";
-import { getCurrentUser, loginWithPassword } from "./auth.service.server";
+import {
+	getCurrentUser,
+	loginWithPassword,
+	logout,
+} from "./auth.service.server";
 export const loginWithPasswordFn = createServerFn({
 	method: "POST",
 })
@@ -10,3 +14,7 @@ export const loginWithPasswordFn = createServerFn({
 export const getCurrentUserFn = createServerFn({
 	method: "GET",
 }).handler(() => getCurrentUser());
+
+export const logoutFn = createServerFn({
+	method: "POST",
+}).handler(() => logout());
