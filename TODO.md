@@ -6,7 +6,7 @@
 - [x] Adicionar sidebar visual e area de conteudo ao layout autenticado.
 - [ ] Adicionar navegacao para Dashboard, Solicitacoes, Emprestimos e Perfil.
 - [ ] Exibir o usuario atual no layout.
-- [ ] Implementar logout.
+- [x] Implementar logout.
 - [ ] Criar estados globais de carregamento, erro e pagina nao encontrada.
 - [ ] Garantir navegacao responsiva em desktop e mobile.
 

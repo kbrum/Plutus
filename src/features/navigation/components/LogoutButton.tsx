@@ -28,10 +28,14 @@ export function LogoutButton() {
 			aria-busy={isLoading}
 			onError={handleError}
 		>
-			<LogOut className="size-[1.1rem] shrink-0" />
-			<span className="hidden md:block">
-				{isLoading ? <LoaderCircle /> : "Sair"}
-			</span>
+			{isLoading ? (
+				<LoaderCircle className="size-[1.1rem] animate-spin" />
+			) : (
+				<>
+					<LogOut className="size-[1.1rem] shrink-0" />
+					<span className="hidden md:block">Sair</span>
+				</>
+			)}
 		</button>
 	);
 }
