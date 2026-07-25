@@ -4,15 +4,26 @@ import type { LoginCredentials } from "../types/auth.types";
 export async function getCurrentUser() {
 	const supabase = createSupabaseServerClient();
 
-	const { data, error } = await supabase.auth.getClaims();
+	const { data: authData, error: authError } = await supabase.auth.getClaims();
 
-	if (error || !data?.claims) {
+	if (authError || !authData?.claims) {
+		return null;
+	}
+
+	const { data: profile, error: profileError } = await supabase
+		.from("profiles")
+		.select("display_name")
+		.eq("id", authData.claims.sub)
+		.single();
+
+	if (profileError) {
 		return null;
 	}
 
 	return {
-		id: data.claims.sub,
-		email: data.claims.email,
+		id: authData.claims.sub,
+		email: authData.claims.email,
+		profile_name: profile.display_name,
 	};
 }
 
