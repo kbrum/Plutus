@@ -7,7 +7,7 @@
 - [ ] Adicionar navegacao para Dashboard, Solicitacoes, Emprestimos e Perfil.
 - [ ] Exibir o usuario atual no layout.
 - [x] Implementar logout.
-- [ ] Criar estados globais de carregamento, erro e pagina nao encontrada.
+- [x] Criar estados globais de carregamento, erro e pagina nao encontrada.
 - [ ] Garantir navegacao responsiva em desktop e mobile.
 
 ## 2. Perfis e participantes
