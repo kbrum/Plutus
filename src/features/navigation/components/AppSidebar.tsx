@@ -1,30 +1,43 @@
 import { Link } from "@tanstack/react-router";
 import {
 	CalendarDays,
-	CircleUserRound,
 	FileText,
 	HandCoins,
 	Landmark,
 	LayoutDashboard,
+	LoaderCircle,
 	MessageSquareMore,
 	ReceiptText,
 	UsersRound,
 } from "lucide-react";
+import { useGetUser } from "#/features/auth/hooks/useGetUser";
 import { LogoutButton } from "./LogoutButton";
 
 const operations = [
-	{ label: "Pessoas", icon: UsersRound },
-	{ label: "Solicitações", icon: FileText },
-	{ label: "Negociações", icon: MessageSquareMore },
-	{ label: "Empréstimos", icon: HandCoins },
-	{ label: "Parcelas", icon: CalendarDays },
-	{ label: "Pagamentos", icon: ReceiptText },
-];
+	{ label: "Membros", icon: UsersRound, to: "/members" },
+	{ label: "Solicitações", icon: FileText, to: "/requests" },
+	{ label: "Negociações", icon: MessageSquareMore, to: "/proposals" },
+	{ label: "Empréstimos", icon: HandCoins, to: "/loans" },
+	{ label: "Parcelas", icon: CalendarDays, to: "/installments" },
+	{ label: "Pagamentos", icon: ReceiptText, to: "/payments" },
+] as const;
 
 export const itemClassName =
 	"group relative flex h-11 w-full items-center justify-center gap-3 rounded-xl px-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800/70 hover:text-slate-100 md:justify-start";
 
+const activeItemClassName =
+	"group relative flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-amber-300/15 bg-amber-400/10 px-3 text-sm font-semibold text-amber-200 shadow-[inset_0_0_24px_rgba(251,191,36,0.025)] md:justify-start";
+
 export function AppSidebar() {
+	const { name, email, isLoading, isError } = useGetUser();
+	const initials = name
+		?.trim()
+		.split(/\s+/)
+		.slice(0, 2)
+		.map((part) => part[0])
+		.join("")
+		.toUpperCase();
+
 	return (
 		<aside className="sticky top-0 flex h-svh w-[4.75rem] shrink-0 flex-col border-r border-slate-800/90 bg-[#0a1119] px-3 py-4 md:w-72 md:px-5 md:py-6">
 			<div className="flex h-12 items-center justify-center md:justify-start md:px-2">
@@ -54,8 +67,7 @@ export function AppSidebar() {
 						activeOptions={{ exact: true }}
 						className={itemClassName}
 						activeProps={{
-							className:
-								"group relative flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-amber-300/15 bg-amber-400/10 px-3 text-sm font-semibold text-amber-200 shadow-[inset_0_0_24px_rgba(251,191,36,0.025)] md:justify-start",
+							className: activeItemClassName,
 						}}
 						title="Dashboard"
 					>
@@ -70,31 +82,55 @@ export function AppSidebar() {
 						Operação
 					</p>
 					<div className="space-y-1">
-						{operations.map(({ label, icon: Icon }) => (
-							<button
+						{operations.map(({ label, icon: Icon, to }) => (
+							<Link
 								key={label}
-								type="button"
+								to={to}
+								activeOptions={{ exact: true }}
 								className={itemClassName}
+								activeProps={{ className: activeItemClassName }}
 								title={label}
 							>
 								<Icon className="size-[1.1rem] shrink-0 text-slate-500 transition-colors group-hover:text-teal-300" />
 								<span className="hidden md:block">{label}</span>
-							</button>
+							</Link>
 						))}
 					</div>
 				</div>
 			</nav>
 
 			<div className="mt-4 border-t border-slate-800/80 pt-4">
-				<button type="button" className={itemClassName} title="Meu perfil">
-					<CircleUserRound className="size-[1.1rem] shrink-0 text-teal-400" />
+				<Link
+					to="/profile"
+					activeOptions={{ exact: true }}
+					className="group flex w-full items-center justify-center gap-3 rounded-xl px-2 py-2 text-sm transition-colors hover:bg-slate-800/70 md:justify-start"
+					activeProps={{
+						className:
+							"group flex w-full items-center justify-center gap-3 rounded-xl border border-amber-300/15 bg-amber-400/10 px-2 py-2 text-sm md:justify-start",
+					}}
+					title={name ? `Perfil de ${name}` : "Meu perfil"}
+					aria-busy={isLoading}
+				>
+					<span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-teal-300/15 bg-teal-400/8 text-xs font-bold text-teal-300">
+						{isLoading ? (
+							<LoaderCircle className="size-4 animate-spin" />
+						) : (
+							(initials ?? "?")
+						)}
+					</span>
 					<span className="hidden min-w-0 flex-1 text-left md:block">
-						<span className="block truncate text-slate-200">Meu perfil</span>
+						<span className="block truncate font-medium text-slate-200">
+							{isLoading
+								? "Carregando perfil"
+								: isError
+									? "Perfil indisponível"
+									: (name ?? "Meu perfil")}
+						</span>
 						<span className="block truncate text-[0.65rem] font-normal text-slate-600">
-							Conta e preferências
+							{email ?? "Conta e preferências"}
 						</span>
 					</span>
-				</button>
+				</Link>
 				<LogoutButton />
 			</div>
 		</aside>

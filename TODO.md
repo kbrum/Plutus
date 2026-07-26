@@ -4,16 +4,17 @@
 
 - [x] Criar a rota de layout `_authenticated` com protecao de sessao e `Outlet`.
 - [x] Adicionar sidebar visual e area de conteudo ao layout autenticado.
-- [ ] Adicionar navegacao para Dashboard, Solicitacoes, Emprestimos e Perfil.
-- [ ] Exibir o usuario atual no layout.
+- [x] Adicionar navegacao para Dashboard, Membros, Solicitacoes, Negociacoes, Emprestimos, Parcelas, Pagamentos e Perfil.
+- [x] Criar as rotas e paginas base dos modulos exibidos na sidebar.
+- [x] Exibir nome, email e iniciais do usuario atual na sidebar.
 - [x] Implementar logout.
 - [x] Criar estados globais de carregamento, erro e pagina nao encontrada.
-- [ ] Garantir navegacao responsiva em desktop e mobile.
+- [x] Garantir navegacao responsiva em desktop e mobile.
 
-## 2. Perfis e participantes
+## 2. Membros e perfil
 
-- [ ] Listar somente perfis ativos.
-- [ ] Implementar pesquisa de perfis por nome.
+- [ ] Listar em Membros somente os perfis ativos.
+- [ ] Implementar pesquisa de membros por nome.
 - [ ] Impedir que o usuario selecione a si mesmo como contraparte.
 - [ ] Criar um seletor reutilizavel de participante.
 - [ ] Permitir que o usuario altere seu `display_name`.
