@@ -1,21 +1,20 @@
-import { redirect } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { LoaderCircle, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useLogout } from "#/features/auth/hooks/useLogout";
 import { itemClassName } from "./AppSidebar";
 
 export function LogoutButton() {
-	const { logout, isLoading, isError, error } = useLogout();
-
-	const handleError = () => {
-		if (isError) {
-			toast.error(error?.message);
-		}
-	};
+	const navigate = useNavigate();
+	const { logout, isLoading } = useLogout();
 
 	const handleLogout = async () => {
-		await logout();
-		redirect({ to: "/auth/login" });
+		try {
+			await logout();
+			await navigate({ to: "/auth/login" });
+		} catch {
+			toast.error("Falha ao sair. Por favor, tente novamente.");
+		}
 	};
 
 	return (
@@ -26,7 +25,6 @@ export function LogoutButton() {
 			onClick={handleLogout}
 			disabled={isLoading}
 			aria-busy={isLoading}
-			onError={handleError}
 		>
 			{isLoading ? (
 				<LoaderCircle className="size-[1.1rem] animate-spin" />
