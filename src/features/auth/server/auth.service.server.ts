@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "#/lib/supabase/client.server";
-import type { LoginCredentials } from "../types/auth.types";
+import type { LoginCredentials, RegisterInfo } from "../types/auth.types";
 
 export async function getCurrentUser() {
 	const supabase = createSupabaseServerClient();
@@ -44,4 +44,23 @@ export async function logout() {
 	if (error) {
 		throw error;
 	}
+}
+
+export async function register(info: RegisterInfo) {
+	const supabase = createSupabaseServerClient();
+	const { data, error } = await supabase.auth.signUp({
+		email: info.email,
+		password: info.password,
+		options: {
+			data: {
+				name: info.name,
+			},
+		},
+	});
+
+	if (error) {
+		throw error;
+	}
+
+	return data.user;
 }

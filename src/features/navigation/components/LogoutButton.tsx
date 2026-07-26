@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { LoaderCircle, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { useLogout } from "#/features/auth/hooks/useLogout";
+import { useLogout } from "#/features/auth/hooks/useAuth";
 import { itemClassName } from "./AppSidebar";
 
 export function LogoutButton() {

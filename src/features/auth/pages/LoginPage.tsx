@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
 	ChartNoAxesCombined,
 	FileCheck2,
@@ -5,6 +6,7 @@ import {
 	ShieldCheck,
 } from "lucide-react";
 
+import { Button } from "#/components/ui/button";
 import { LoginForm } from "../components/LoginForm";
 
 const features = [
@@ -31,7 +33,7 @@ export function LoginPage() {
 			/>
 			<div
 				aria-hidden="true"
-				className="absolute -right-32 -bottom-48 size-[32rem] rounded-full bg-amber-500/8 blur-3xl"
+				className="absolute -right-32 -bottom-48 size-128 rounded-full bg-amber-500/8 blur-3xl"
 			/>
 
 			<section className="relative mx-auto grid min-h-[calc(100svh-2rem)] w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-slate-700/60 bg-[#0a1018] shadow-[0_40px_100px_rgba(0,0,0,0.45)] sm:min-h-[calc(100svh-3rem)] lg:min-h-[720px] lg:grid-cols-[1.08fr_0.92fr]">
@@ -116,6 +118,17 @@ export function LoginPage() {
 						</p>
 
 						<LoginForm />
+						<div className="mt-6 border-t border-slate-800 pt-5 text-center">
+							<Button
+								asChild
+								variant="ghost"
+								className="w-full text-slate-500 hover:bg-slate-900 hover:text-slate-200"
+							>
+								<Link to="/auth/register">
+									Não tem conta ainda? Faça seu registro
+								</Link>
+							</Button>
+						</div>
 					</div>
 				</div>
 			</section>

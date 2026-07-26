@@ -7,7 +7,7 @@ import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 
-import { useLogin } from "../hooks/useLogin";
+import { useLogin } from "../hooks/useAuth";
 import { loginSchema } from "../schemas/auth.schemas";
 import type { LoginCredentials } from "../types/auth.types";
 

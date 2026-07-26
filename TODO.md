@@ -13,12 +13,12 @@
 
 ## 2. Membros e perfil
 
-- [ ] Listar em Membros somente os perfis ativos.
+- [x] Listar em Membros somente os perfis ativos.
 - [ ] Implementar pesquisa de membros por nome.
 - [ ] Impedir que o usuario selecione a si mesmo como contraparte.
 - [ ] Criar um seletor reutilizavel de participante.
 - [ ] Permitir que o usuario altere seu `display_name`.
-- [ ] Definir e implementar como novos usuarios serao cadastrados.
+- [x] Definir e implementar como novos usuarios serao cadastrados.
 
 ## 3. Solicitacoes de emprestimo
 

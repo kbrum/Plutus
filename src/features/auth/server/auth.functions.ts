@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { loginSchema } from "../schemas/auth.schemas";
+import { loginSchema, registerSchema } from "../schemas/auth.schemas";
 import {
 	getCurrentUser,
 	loginWithPassword,
 	logout,
+	register,
 } from "./auth.service.server";
 export const loginWithPasswordFn = createServerFn({
 	method: "POST",
@@ -18,3 +19,9 @@ export const getCurrentUserFn = createServerFn({
 export const logoutFn = createServerFn({
 	method: "POST",
 }).handler(() => logout());
+
+export const registerFn = createServerFn({
+	method: "POST",
+})
+	.validator(registerSchema)
+	.handler(({ data }) => register(data));
