@@ -14,8 +14,8 @@
 ## 2. Membros e perfil
 
 - [x] Listar em Membros somente os perfis ativos.
-- [ ] Implementar pesquisa de membros por nome.
-- [ ] Impedir que o usuario selecione a si mesmo como contraparte.
+- [x] Implementar pesquisa de membros por nome.
+- [x] Impedir que o usuario selecione a si mesmo como contraparte.
 - [ ] Criar um seletor reutilizavel de participante.
 - [ ] Permitir que o usuario altere seu `display_name`.
 - [x] Definir e implementar como novos usuarios serao cadastrados.

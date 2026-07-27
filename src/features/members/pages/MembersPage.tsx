@@ -1,13 +1,31 @@
-import { UsersRound } from "lucide-react";
+import { Search, SearchX, UsersRound } from "lucide-react";
+import { useDeferredValue, useState } from "react";
+import { Input } from "#/components/ui/input";
 import { TooltipProvider } from "#/components/ui/tooltip";
 import { MemberCard } from "../components/MemberCard";
 import { useGetMembers } from "../hooks/useMembers";
 
 const loadingCards = ["member-1", "member-2", "member-3", "member-4"];
 
+function normalizeText(value: string) {
+	return value
+		.normalize("NFD")
+		.replace(/\p{Diacritic}/gu, "")
+		.toLocaleLowerCase("pt-BR")
+		.trim();
+}
+
 export function MembersPage() {
 	const { members: response, isLoading, isError } = useGetMembers();
 	const members = response?.members ?? [];
+	const [search, setSearch] = useState("");
+	const deferredSearch = useDeferredValue(search);
+	const normalizedSearch = normalizeText(deferredSearch);
+	const filteredMembers = normalizedSearch
+		? members.filter((member) =>
+				normalizeText(member.display_name).includes(normalizedSearch),
+			)
+		: members;
 
 	return (
 		<section className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
@@ -28,9 +46,26 @@ export function MembersPage() {
 				{!isLoading && !isError ? (
 					<div className="flex items-center gap-2 text-xs text-slate-500">
 						<UsersRound className="size-4 text-teal-400" />
+						{normalizedSearch ? `${filteredMembers.length} de ` : null}
 						{members.length} {members.length === 1 ? "membro" : "membros"}
 					</div>
 				) : null}
+			</div>
+
+			<div className="relative mt-7 max-w-md">
+				<Search
+					aria-hidden="true"
+					className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-slate-500"
+				/>
+				<Input
+					type="search"
+					aria-label="Pesquisar membros por nome"
+					placeholder="Pesquisar membro por nome"
+					value={search}
+					disabled={isLoading || isError}
+					className="h-11 rounded-xl border-slate-700/80 bg-slate-900/55 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-teal-400/60 focus-visible:ring-teal-400/15"
+					onChange={(event) => setSearch(event.target.value)}
+				/>
 			</div>
 
 			<TooltipProvider delayDuration={250}>
@@ -54,16 +89,27 @@ export function MembersPage() {
 					<div className="mt-7 rounded-2xl border border-rose-400/15 bg-rose-400/5 px-5 py-8 text-center text-sm text-rose-200">
 						Não foi possível carregar os membros.
 					</div>
-				) : members.length === 0 ? (
+				) : filteredMembers.length === 0 ? (
 					<div className="mt-7 rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 px-5 py-12 text-center">
-						<UsersRound className="mx-auto size-7 text-slate-600" />
+						{normalizedSearch ? (
+							<SearchX className="mx-auto size-7 text-slate-600" />
+						) : (
+							<UsersRound className="mx-auto size-7 text-slate-600" />
+						)}
 						<p className="mt-3 text-sm font-medium text-slate-300">
-							Nenhum membro disponível
+							{normalizedSearch
+								? "Nenhum membro encontrado"
+								: "Nenhum membro disponível"}
 						</p>
+						{normalizedSearch ? (
+							<p className="mt-1 text-xs text-slate-600">
+								Tente pesquisar usando outro nome.
+							</p>
+						) : null}
 					</div>
 				) : (
 					<ul className="mt-7 grid gap-3 lg:grid-cols-2">
-						{members.map((member) => (
+						{filteredMembers.map((member) => (
 							<MemberCard key={member.id} name={member.display_name} />
 						))}
 					</ul>
