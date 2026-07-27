@@ -29,7 +29,7 @@ export function MembersPage() {
 
 	return (
 		<section className="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-			<div className="flex flex-col justify-between gap-5 border-b border-slate-800/80 pb-7 sm:flex-row sm:items-end">
+			<div className="border-b border-slate-800/80 pb-7">
 				<div>
 					<p className="text-xs font-bold tracking-[0.18em] text-teal-300/80 uppercase">
 						Comunidade
@@ -42,14 +42,6 @@ export function MembersPage() {
 						empréstimo.
 					</p>
 				</div>
-
-				{!isLoading && !isError ? (
-					<div className="flex items-center gap-2 text-xs text-slate-500">
-						<UsersRound className="size-4 text-teal-400" />
-						{normalizedSearch ? `${filteredMembers.length} de ` : null}
-						{members.length} {members.length === 1 ? "membro" : "membros"}
-					</div>
-				) : null}
 			</div>
 
 			<div className="relative mt-7 max-w-md">
