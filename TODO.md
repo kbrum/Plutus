@@ -15,14 +15,16 @@
 
 - [x] Listar em Membros somente os perfis ativos.
 - [x] Implementar pesquisa de membros por nome.
-- [x] Impedir que o usuario selecione a si mesmo como contraparte.
-- [ ] Criar um seletor reutilizavel de participante.
-- [ ] Permitir que o usuario altere seu `display_name`.
+- [x] Ocultar o usuario atual da listagem de membros.
+- [x] Criar cards de membros com estados de carregamento, erro e lista vazia.
+- [x] Adicionar acao visual para solicitar emprestimo a um membro.
+- [x] Definir Membros como unico ponto de entrada para uma nova solicitacao.
+- [x] Permitir que o usuario altere seu `display_name`.
 - [x] Definir e implementar como novos usuarios serao cadastrados.
 
 ## 3. Solicitacoes de emprestimo
 
-- [ ] Criar solicitacao com credor, valor e mensagem opcional.
+- [ ] Criar solicitacao com credor pre-selecionado, valor e mensagem opcional.
 - [ ] Listar solicitacoes enviadas e recebidas.
 - [ ] Adicionar filtros por papel e status.
 - [ ] Criar pagina de detalhes da solicitacao.

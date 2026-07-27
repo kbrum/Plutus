@@ -30,3 +30,27 @@ export async function getMembers() {
 		members,
 	};
 }
+
+export async function updateMemberName(name: string) {
+	const supabase = createSupabaseServerClient();
+
+	const { data: claims, error: claimsError } = await supabase.auth.getClaims();
+	const currentUserId = claims?.claims.sub;
+
+	if (claimsError || !currentUserId) {
+		throw claimsError ?? new Error("Usuário não autenticado");
+	}
+
+	const { data: updatedMember, error } = await supabase
+		.from("profiles")
+		.update({ display_name: name })
+		.eq("id", currentUserId)
+		.select("id, display_name")
+		.single();
+
+	if (error) {
+		throw error;
+	}
+
+	return updatedMember;
+}
