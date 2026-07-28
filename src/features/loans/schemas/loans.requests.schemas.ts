@@ -14,3 +14,7 @@ export const createLoanRequestSchema = z.object({
 });
 
 export type CreateLoanRequestSchema = z.infer<typeof createLoanRequestSchema>;
+
+export const deleteLoanRequestSchema = z.object({
+	requestId: z.uuid("Informe uma solicitação válida"),
+});

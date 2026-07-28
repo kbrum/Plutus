@@ -21,6 +21,8 @@ import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
 import { Route as AuthenticatedProposalsIndexRouteImport } from './routes/_authenticated/proposals/index'
 import { Route as AuthenticatedRequestsIndexRouteImport } from './routes/_authenticated/requests/index'
+import { Route as AuthenticatedRequestsReceivedIndexRouteImport } from './routes/_authenticated/requests/received/index'
+import { Route as AuthenticatedRequestsSentIndexRouteImport } from './routes/_authenticated/requests/sent/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +90,18 @@ const AuthenticatedRequestsIndexRoute =
     path: '/requests/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedRequestsReceivedIndexRoute =
+  AuthenticatedRequestsReceivedIndexRouteImport.update({
+    id: '/requests/received/',
+    path: '/requests/received/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRequestsSentIndexRoute =
+  AuthenticatedRequestsSentIndexRouteImport.update({
+    id: '/requests/sent/',
+    path: '/requests/sent/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +115,8 @@ export interface FileRoutesByFullPath {
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/proposals/': typeof AuthenticatedProposalsIndexRoute
   '/requests/': typeof AuthenticatedRequestsIndexRoute
+  '/requests/received/': typeof AuthenticatedRequestsReceivedIndexRoute
+  '/requests/sent/': typeof AuthenticatedRequestsSentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -114,6 +130,8 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/proposals': typeof AuthenticatedProposalsIndexRoute
   '/requests': typeof AuthenticatedRequestsIndexRoute
+  '/requests/received': typeof AuthenticatedRequestsReceivedIndexRoute
+  '/requests/sent': typeof AuthenticatedRequestsSentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -129,6 +147,8 @@ export interface FileRoutesById {
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/_authenticated/proposals/': typeof AuthenticatedProposalsIndexRoute
   '/_authenticated/requests/': typeof AuthenticatedRequestsIndexRoute
+  '/_authenticated/requests/received/': typeof AuthenticatedRequestsReceivedIndexRoute
+  '/_authenticated/requests/sent/': typeof AuthenticatedRequestsSentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,6 +164,8 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/proposals/'
     | '/requests/'
+    | '/requests/received/'
+    | '/requests/sent/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -157,6 +179,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposals'
     | '/requests'
+    | '/requests/received'
+    | '/requests/sent'
   id:
     | '__root__'
     | '/'
@@ -171,6 +195,8 @@ export interface FileRouteTypes {
     | '/_authenticated/profile/'
     | '/_authenticated/proposals/'
     | '/_authenticated/requests/'
+    | '/_authenticated/requests/received/'
+    | '/_authenticated/requests/sent/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +292,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRequestsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/requests/received/': {
+      id: '/_authenticated/requests/received/'
+      path: '/requests/received'
+      fullPath: '/requests/received/'
+      preLoaderRoute: typeof AuthenticatedRequestsReceivedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/requests/sent/': {
+      id: '/_authenticated/requests/sent/'
+      path: '/requests/sent'
+      fullPath: '/requests/sent/'
+      preLoaderRoute: typeof AuthenticatedRequestsSentIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -278,6 +318,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedProposalsIndexRoute: typeof AuthenticatedProposalsIndexRoute
   AuthenticatedRequestsIndexRoute: typeof AuthenticatedRequestsIndexRoute
+  AuthenticatedRequestsReceivedIndexRoute: typeof AuthenticatedRequestsReceivedIndexRoute
+  AuthenticatedRequestsSentIndexRoute: typeof AuthenticatedRequestsSentIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -289,6 +331,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedProposalsIndexRoute: AuthenticatedProposalsIndexRoute,
   AuthenticatedRequestsIndexRoute: AuthenticatedRequestsIndexRoute,
+  AuthenticatedRequestsReceivedIndexRoute:
+    AuthenticatedRequestsReceivedIndexRoute,
+  AuthenticatedRequestsSentIndexRoute: AuthenticatedRequestsSentIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

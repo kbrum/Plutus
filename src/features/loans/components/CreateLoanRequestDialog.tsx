@@ -30,6 +30,10 @@ type CreateLoanRequestDialogProps = {
 	lenderName: string;
 };
 
+const amountFormatter = new Intl.NumberFormat("pt-BR", {
+	maximumFractionDigits: 0,
+});
+
 function getErrorMessage(error: unknown) {
 	if (typeof error === "string") {
 		return error;
@@ -148,22 +152,23 @@ export function CreateLoanRequestDialog({
 										<Input
 											id={field.name}
 											name={field.name}
-											type="number"
-											min="0.01"
-											step="0.01"
-											inputMode="decimal"
-											placeholder="0,00"
-											value={field.state.value || ""}
+											type="text"
+											inputMode="numeric"
+											pattern="[0-9.]*"
+											autoComplete="off"
+											placeholder="0"
+											value={
+												field.state.value
+													? amountFormatter.format(field.state.value)
+													: ""
+											}
 											aria-invalid={Boolean(error)}
 											className="h-12 rounded-xl border-slate-700/80 bg-slate-950/45 pr-4 pl-11 text-base font-semibold text-slate-100 shadow-none focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
 											onBlur={field.handleBlur}
-											onChange={(event) =>
-												field.handleChange(
-													event.target.value === ""
-														? 0
-														: event.target.valueAsNumber,
-												)
-											}
+											onChange={(event) => {
+												const digits = event.target.value.replace(/\D/g, "");
+												field.handleChange(digits ? Number(digits) : 0);
+											}}
 										/>
 									</div>
 									{error ? (

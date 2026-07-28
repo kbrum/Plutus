@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { RequestsPage } from "#/features/loans/pages/RequestsPage";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/requests/")({
-	component: RequestsPage,
+	beforeLoad: () => {
+		throw redirect({ to: "/requests/received" });
+	},
 });
