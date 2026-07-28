@@ -24,8 +24,8 @@
 
 ## 3. Solicitacoes de emprestimo
 
-- [ ] Criar solicitacao com credor pre-selecionado, valor e mensagem opcional.
-- [ ] Listar solicitacoes enviadas e recebidas.
+- [x] Criar solicitacao com credor pre-selecionado, valor e mensagem opcional.
+- [x] Listar solicitacoes enviadas e recebidas.
 - [ ] Adicionar filtros por papel e status.
 - [ ] Criar pagina de detalhes da solicitacao.
 - [ ] Permitir que o solicitante cancele uma solicitacao pendente ou em negociacao.

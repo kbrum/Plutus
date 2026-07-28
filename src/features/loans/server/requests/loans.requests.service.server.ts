@@ -14,7 +14,17 @@ export async function getLoanRequests() {
 
 	const { data: requests, error: requestError } = await supabase
 		.from("loan_requests")
-		.select("*")
+		.select(`
+			id,
+			borrower_id,
+			lender_id,
+			requested_amount,
+			message,
+			status,
+			created_at,
+			borrower:profiles!loan_requests_borrower_id_fkey(display_name),
+			lender:profiles!loan_requests_lender_id_fkey(display_name)
+		`)
 		.order("created_at", { ascending: false });
 
 	if (requestError) {
@@ -40,7 +50,7 @@ export async function createLoanRequest(data: CreateLoanRequestSchema) {
 		.insert({
 			borrower_id: currentUserId,
 			lender_id: data.lenderId,
-			message: data.message ?? null,
+			message: data.message || null,
 			requested_amount: data.requestedAmount,
 		})
 		.select()

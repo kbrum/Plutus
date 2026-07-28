@@ -102,7 +102,11 @@ export function MembersPage() {
 				) : (
 					<ul className="mt-7 grid gap-3 lg:grid-cols-2">
 						{filteredMembers.map((member) => (
-							<MemberCard key={member.id} name={member.display_name} />
+							<MemberCard
+								key={member.id}
+								id={member.id}
+								name={member.display_name}
+							/>
 						))}
 					</ul>
 				)}
