@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "#/lib/supabase/client.server";
-import type { LoginCredentials, RegisterInfo } from "../types/auth.types";
+import type { LoginSchema, RegisterSchema } from "../schemas/auth.schemas";
 
 export async function getCurrentUser() {
 	const supabase = createSupabaseServerClient();
@@ -27,7 +27,7 @@ export async function getCurrentUser() {
 	};
 }
 
-export async function loginWithPassword(credentials: LoginCredentials) {
+export async function loginWithPassword(credentials: LoginSchema) {
 	const supabase = createSupabaseServerClient();
 	const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
@@ -46,7 +46,7 @@ export async function logout() {
 	}
 }
 
-export async function register(info: RegisterInfo) {
+export async function register(info: RegisterSchema) {
 	const supabase = createSupabaseServerClient();
 	const { data, error } = await supabase.auth.signUp({
 		email: info.email,

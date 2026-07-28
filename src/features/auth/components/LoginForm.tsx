@@ -8,8 +8,7 @@ import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 
 import { useLogin } from "../hooks/useAuth";
-import { loginSchema } from "../schemas/auth.schemas";
-import type { LoginCredentials } from "../types/auth.types";
+import { type LoginSchema, loginSchema } from "../schemas/auth.schemas";
 
 function showLoginError() {
 	toast.error("Erro ao entrar", {
@@ -24,7 +23,7 @@ export function LoginForm() {
 		defaultValues: {
 			email: "",
 			password: "",
-		} satisfies LoginCredentials,
+		} satisfies LoginSchema,
 		onSubmit: async ({ value }) => {
 			try {
 				await login(value);

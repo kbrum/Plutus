@@ -1,18 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import type { LoginSchema, RegisterSchema } from "../schemas/auth.schemas";
 import {
 	loginWithPasswordFn,
 	logoutFn,
 	registerFn,
 } from "../server/auth.functions";
-import type { LoginCredentials, RegisterInfo } from "../types/auth.types";
 
 export function useLogin() {
 	const loginFn = useServerFn(loginWithPasswordFn);
 
 	const login = useMutation({
-		mutationFn: (credentials: LoginCredentials) =>
-			loginFn({ data: credentials }),
+		mutationFn: (credentials: LoginSchema) => loginFn({ data: credentials }),
 	});
 
 	return {
@@ -41,7 +40,7 @@ export function useRegister() {
 	const registerServerFn = useServerFn(registerFn);
 
 	const registerMutation = useMutation({
-		mutationFn: (info: RegisterInfo) => registerServerFn({ data: info }),
+		mutationFn: (info: RegisterSchema) => registerServerFn({ data: info }),
 	});
 
 	return {
