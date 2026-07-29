@@ -1,5 +1,7 @@
 import { createSupabaseServerClient } from "#/lib/supabase/client.server";
 
+const memberSelect = "id, display_name";
+
 export async function getMembers() {
 	const supabase = createSupabaseServerClient();
 
@@ -17,7 +19,7 @@ export async function getMembers() {
 
 	const { data: members, error: queryError } = await supabase
 		.from("profiles")
-		.select("id, display_name")
+		.select(memberSelect)
 		.neq("id", currentUserId)
 		.eq("is_active", true)
 		.order("display_name", { ascending: true });
@@ -45,7 +47,7 @@ export async function updateMemberName(name: string) {
 		.from("profiles")
 		.update({ display_name: name })
 		.eq("id", currentUserId)
-		.select("id, display_name")
+		.select(memberSelect)
 		.single();
 
 	if (error) {

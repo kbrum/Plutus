@@ -344,7 +344,145 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_loan_proposal: {
+        Args: { p_proposal_id: string }
+        Returns: {
+          accepted_proposal_id: string
+          activated_at: string
+          borrower_id: string
+          created_at: string
+          first_due_date: string
+          id: string
+          installment_count: number
+          interest_rate: number
+          lender_id: string
+          loan_request_id: string
+          paid_at: string | null
+          principal_amount: number
+          status: Database["public"]["Enums"]["loan_status"]
+          total_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      accept_loan_request: {
+        Args: { p_request_id: string }
+        Returns: {
+          borrower_id: string
+          cancelled_at: string | null
+          created_at: string
+          id: string
+          lender_id: string
+          message: string | null
+          requested_amount: number
+          status: Database["public"]["Enums"]["loan_request_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_loan_proposal: {
+        Args: {
+          p_amount: number
+          p_first_due_date: string
+          p_installment_count: number
+          p_interest_rate: number
+          p_loan_request_id: string
+          p_message: string
+          p_parent_proposal_id?: string
+        }
+        Returns: {
+          amount: number
+          created_at: string
+          first_due_date: string
+          id: string
+          installment_count: number
+          interest_rate: number
+          loan_request_id: string
+          message: string | null
+          parent_proposal_id: string | null
+          proposed_by: string
+          status: Database["public"]["Enums"]["loan_proposal_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_proposals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reject_loan_proposal: {
+        Args: { p_proposal_id: string }
+        Returns: {
+          amount: number
+          created_at: string
+          first_due_date: string
+          id: string
+          installment_count: number
+          interest_rate: number
+          loan_request_id: string
+          message: string | null
+          parent_proposal_id: string | null
+          proposed_by: string
+          status: Database["public"]["Enums"]["loan_proposal_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_proposals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reject_loan_request: {
+        Args: { p_request_id: string }
+        Returns: {
+          borrower_id: string
+          cancelled_at: string | null
+          created_at: string
+          id: string
+          lender_id: string
+          message: string | null
+          requested_amount: number
+          status: Database["public"]["Enums"]["loan_request_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      withdraw_loan_proposal: {
+        Args: { p_proposal_id: string }
+        Returns: {
+          amount: number
+          created_at: string
+          first_due_date: string
+          id: string
+          installment_count: number
+          interest_rate: number
+          loan_request_id: string
+          message: string | null
+          parent_proposal_id: string | null
+          proposed_by: string
+          status: Database["public"]["Enums"]["loan_proposal_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loan_proposals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       installment_status: "pending" | "paid" | "overdue" | "cancelled"

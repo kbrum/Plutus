@@ -24,4 +24,12 @@ export const createLoanProposalSchema = z.object({
 		.optional(),
 });
 
+export const loanProposalIdSchema = z.object({
+	proposalId: z.uuid("Informe uma proposta válida"),
+});
+
+export const loanProposalRequestIdSchema = z.object({
+	loanRequestId: z.uuid("Informe uma solicitação válida"),
+});
+
 export type CreateLoanProposalSchema = z.infer<typeof createLoanProposalSchema>;

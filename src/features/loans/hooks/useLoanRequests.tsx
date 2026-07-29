@@ -2,10 +2,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import type { CreateLoanRequestSchema } from "../schemas/loans.requests.schemas";
 import {
+	acceptLoanRequestFn,
+	cancelLoanRequestFn,
 	createLoanRequestFn,
-	deleteLoanRequestFn,
+	getAcceptedLoanRequestsAwaitingProposalFn,
+	getAcceptedLoanRequestsAwaitingTermsFn,
 	getReceivedLoanRequestsFn,
+	getReceivedLoanRequestsHistoryFn,
 	getSentLoanRequestsFn,
+	getSentLoansRequestsHistoryFn,
+	rejectLoanRequestFn,
 } from "../server/requests/loans.requests.functions";
 
 const loanRequestsQueryKey = ["loan-requests"] as const;
@@ -22,6 +28,55 @@ export function useGetLoanRequests(direction: LoanRequestDirection) {
 
 	return {
 		loanRequests: query.data ?? [],
+		isLoading: query.isLoading,
+		isError: query.isError,
+	};
+}
+
+export function useGetAcceptedLoanRequestsAwaitingProposal(enabled = true) {
+	const getRequests = useServerFn(getAcceptedLoanRequestsAwaitingProposalFn);
+	const query = useQuery({
+		queryKey: [...loanRequestsQueryKey, "awaiting-proposal"],
+		queryFn: getRequests,
+		enabled,
+	});
+
+	return {
+		loanRequests: query.data ?? [],
+		isLoading: query.isLoading,
+		isError: query.isError,
+	};
+}
+
+export function useGetAcceptedLoanRequestsAwaitingTerms(enabled = true) {
+	const getRequests = useServerFn(getAcceptedLoanRequestsAwaitingTermsFn);
+	const query = useQuery({
+		queryKey: [...loanRequestsQueryKey, "awaiting-terms"],
+		queryFn: getRequests,
+		enabled,
+	});
+
+	return {
+		loanRequests: query.data ?? [],
+		isLoading: query.isLoading,
+		isError: query.isError,
+	};
+}
+
+export function useGetLoanRequestsHistory(
+	direction: LoanRequestDirection,
+	enabled: boolean,
+) {
+	const getReceivedHistory = useServerFn(getReceivedLoanRequestsHistoryFn);
+	const getSentHistory = useServerFn(getSentLoansRequestsHistoryFn);
+	const query = useQuery({
+		queryKey: [...loanRequestsQueryKey, "history", direction],
+		queryFn: direction === "received" ? getReceivedHistory : getSentHistory,
+		enabled,
+	});
+
+	return {
+		loanRequestsHistory: query.data ?? [],
 		isLoading: query.isLoading,
 		isError: query.isError,
 	};
@@ -44,17 +99,45 @@ export function useCreateLoanRequest() {
 
 export function useDeleteLoanRequest() {
 	const queryClient = useQueryClient();
-	const deleteRequest = useServerFn(deleteLoanRequestFn);
+	const cancelRequest = useServerFn(cancelLoanRequestFn);
 	const mutation = useMutation({
-		mutationFn: (requestId: string) => deleteRequest({ data: { requestId } }),
+		mutationFn: (requestId: string) => cancelRequest({ data: { requestId } }),
 		onSuccess: () =>
-			queryClient.invalidateQueries({
-				queryKey: [...loanRequestsQueryKey, "sent"],
-			}),
+			queryClient.invalidateQueries({ queryKey: loanRequestsQueryKey }),
 	});
 
 	return {
-		deleteLoanRequest: mutation.mutateAsync,
+		cancelLoanRequest: mutation.mutateAsync,
+		isLoading: mutation.isPending,
+	};
+}
+
+export function useAcceptLoanRequest() {
+	const queryClient = useQueryClient();
+	const acceptRequest = useServerFn(acceptLoanRequestFn);
+	const mutation = useMutation({
+		mutationFn: (requestId: string) => acceptRequest({ data: { requestId } }),
+		onSuccess: () =>
+			queryClient.invalidateQueries({ queryKey: loanRequestsQueryKey }),
+	});
+
+	return {
+		acceptLoanRequest: mutation.mutateAsync,
+		isLoading: mutation.isPending,
+	};
+}
+
+export function useRejectLoanRequest() {
+	const queryClient = useQueryClient();
+	const rejectRequest = useServerFn(rejectLoanRequestFn);
+	const mutation = useMutation({
+		mutationFn: (requestId: string) => rejectRequest({ data: { requestId } }),
+		onSuccess: () =>
+			queryClient.invalidateQueries({ queryKey: loanRequestsQueryKey }),
+	});
+
+	return {
+		rejectLoanRequest: mutation.mutateAsync,
 		isLoading: mutation.isPending,
 	};
 }
