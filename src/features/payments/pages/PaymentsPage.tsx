@@ -3,9 +3,9 @@ import { FeaturePlaceholderPage } from "#/features/navigation/components/Feature
 export function PaymentsPage() {
 	return (
 		<FeaturePlaceholderPage
-			eyebrow="Movimentações"
+			eyebrow="Em breve"
 			title="Pagamentos"
-			description="Consulte pagamentos reportados, confirmados ou rejeitados."
+			description="Este recurso está em desenvolvimento e estará disponível em breve."
 		/>
 	);
 }

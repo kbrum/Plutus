@@ -37,26 +37,32 @@
 - [x] Adicionar estados de carregamento, erro e lista vazia ao historico.
 - [x] Remover `negotiating` de `loan_request_status` e o trigger associado.
 - [x] Definir que `accepted` significa que o credor aceitou negociar a request.
+- [x] Manter requests `pending` sem expiracao ate aceite, recusa ou cancelamento.
 - [x] Implementar a acao de aceitar uma solicitacao recebida.
 - [x] Implementar a acao de rejeitar uma solicitacao recebida.
 - [x] Atualizar `status` e `updated_at` de forma segura ao aceitar ou rejeitar.
-- [ ] Adicionar filtros por papel e status.
-- [ ] Criar pagina de detalhes da solicitacao.
-- [ ] Testar que terceiros nao conseguem aceitar, rejeitar ou excluir requests.
+- [x] Adicionar filtros por papel e status no historico unificado.
+- [x] Criar teste de integracao garantindo que terceiros nao conseguem aceitar, rejeitar ou excluir requests.
 
 ## 4. Propostas e contrapropostas
 
 - [x] Permitir proposals no banco somente para requests `accepted`.
 - [x] Listar requests aceitas que podem iniciar ou continuar uma negociacao.
 - [x] Criar proposta com valor, juros, parcelas, primeiro vencimento e mensagem.
-- [ ] Calcular e exibir principal, juros, total e valor estimado das parcelas.
+- [x] Calcular e exibir valor original, taxa de juros e total com juros nos cards de definicao e recebimento de propostas.
+- [x] Exibir o valor estimado de cada parcela nos cards de definicao, envio e recebimento de propostas.
+- [x] Exibir o impacto monetario dos juros por meio do valor original e do total com juros durante a negociacao.
 - [x] Criar contraproposta vinculada por `parent_proposal_id`.
-- [x] Exibir a negociacao como uma linha do tempo.
+- [x] Exibir a negociacao como uma linha do tempo para propostas enviadas e recebidas.
+- [x] Organizar as acoes de propostas recebidas para consultar, aceitar, recusar, ajustar e enviar contrapropostas.
 - [x] Permitir que o autor retire uma proposta pendente.
 - [x] Permitir que o destinatario rejeite uma proposta pendente.
 - [x] Marcar a proposta anterior como `superseded` ao contrapropor.
 - [x] Implementar RPCs seguras para retirada e rejeicao.
-- [ ] Remover o estado `expired` do enum se ele continuar sem uso no MVP.
+- [x] Remover o estado `expired`; proposals permanecem `pending` ate uma acao explicita de um participante.
+- [x] Desabilitar o salvamento de termos enquanto os campos obrigatorios estiverem invalidos ou incompletos.
+- [x] Exibir aviso imediato quando a taxa de juros ultrapassar o limite de 100%.
+- [x] Atualizar requests e proposals automaticamente apos criar, retirar, rejeitar ou aceitar uma proposta.
 
 ## 5. Aceitacao e formalizacao
 
@@ -67,17 +73,18 @@
 - [x] Encerrar as demais propostas pendentes da negociacao.
 - [x] Criar o registro em `loans` com juros simples.
 - [x] Gerar todas as parcelas em `installments` na mesma transacao.
-- [ ] Testar concorrencia para impedir aceitacao duplicada.
+- [x] Criar teste concorrente garantindo uma unica formalizacao para duas tentativas simultaneas de aceite.
 
-## 6. Emprestimos e parcelas
+## 6. Emprestimos e parcelas - MVP concluido
 
-- [ ] Listar emprestimos como credor e devedor.
-- [ ] Adicionar filtros por papel e status.
-- [ ] Criar pagina de detalhes do emprestimo.
-- [ ] Exibir participantes, valores, juros, saldo e proximo vencimento.
-- [ ] Exibir o cronograma completo de parcelas.
-- [ ] Calcular atraso visualmente para parcelas pendentes com vencimento passado.
-- [ ] Exibir progresso de pagamento do emprestimo.
+- [x] Listar emprestimos como credor e devedor.
+- [x] Adicionar filtros por papel e status no historico unificado.
+- [x] Criar pagina de detalhes do emprestimo.
+- [x] Exibir participantes, valores, juros, saldo e proximo vencimento.
+- [x] Exibir progresso de pagamento do emprestimo.
+- [x] Exibir o cronograma completo com a data e o valor de cada parcela.
+- [x] Destacar valor inicial, juros, valor total com juros e numero de parcelas sem sobrecarregar a interface.
+- [x] Navegar dos cards ativos para o dashboard individual do emprestimo.
 
 ## 7. Pagamentos
 
@@ -87,17 +94,18 @@
 - [ ] Permitir que o credor confirme ou rejeite um pagamento reportado.
 - [ ] Implementar RPCs transacionais para confirmar e rejeitar pagamentos.
 - [ ] Atualizar a parcela ao confirmar o pagamento.
+- [ ] Marcar automaticamente como atrasadas as parcelas pendentes com vencimento passado.
 - [ ] Marcar o emprestimo como `paid` quando todas as parcelas forem quitadas.
 - [ ] Impedir autorconfirmacao e operacoes de terceiros.
 
 ## 8. Dashboard
 
-- [ ] Exibir total emprestado e total tomado emprestado.
-- [ ] Exibir saldos a receber e a pagar.
-- [ ] Exibir proximos vencimentos e parcelas atrasadas.
-- [ ] Exibir solicitacoes aguardando resposta.
-- [ ] Exibir negociacoes em andamento.
-- [ ] Adicionar atalhos para criar solicitacao e consultar emprestimos.
+- [x] Exibir total emprestado e total tomado emprestado.
+- [x] Exibir saldos programados a receber e a pagar.
+- [x] Exibir proximos vencimentos e parcelas atrasadas pela data.
+- [x] Exibir solicitacoes aguardando resposta.
+- [x] Exibir negociacoes que exigem acao e as que aguardam a outra pessoa.
+- [x] Exibir grafico comparativo do fluxo programado para os proximos seis meses.
 
 ## 9. Qualidade e seguranca
 
@@ -113,7 +121,8 @@
 - [ ] Criar bucket S3 privado para avatares e comprovantes.
 - [ ] Configurar IAM minimo, CORS e lifecycle do bucket S3.
 - [ ] Implementar uploads e downloads com URLs pre-assinadas.
-- [ ] Executar `pnpm check`, `pnpm typecheck` e `pnpm build`.
+- [x] Executar `pnpm check`, `pnpm typecheck` e `pnpm build`.
+- [ ] Executar `pnpm test:loans` no Supabase local ou CI com Docker disponivel.
 
 ## 10. Deploy
 

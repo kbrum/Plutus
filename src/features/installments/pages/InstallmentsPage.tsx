@@ -3,9 +3,9 @@ import { FeaturePlaceholderPage } from "#/features/navigation/components/Feature
 export function InstallmentsPage() {
 	return (
 		<FeaturePlaceholderPage
-			eyebrow="Agenda financeira"
+			eyebrow="Em breve"
 			title="Parcelas"
-			description="Acompanhe parcelas futuras, vencidas e já pagas."
+			description="Este recurso está em desenvolvimento e estará disponível em breve."
 		/>
 	);
 }
