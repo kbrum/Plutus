@@ -8,10 +8,14 @@ import {
 } from "../server/auth.functions";
 
 export function useLogin() {
+	const queryClient = useQueryClient();
 	const loginFn = useServerFn(loginWithPasswordFn);
 
 	const login = useMutation({
 		mutationFn: (credentials: LoginSchema) => loginFn({ data: credentials }),
+		onSuccess: () => {
+			queryClient.removeQueries({ queryKey: ["user"] });
+		},
 	});
 
 	return {
@@ -37,10 +41,14 @@ export function useLogout() {
 }
 
 export function useRegister() {
+	const queryClient = useQueryClient();
 	const registerServerFn = useServerFn(registerFn);
 
 	const registerMutation = useMutation({
 		mutationFn: (info: RegisterSchema) => registerServerFn({ data: info }),
+		onSuccess: () => {
+			queryClient.removeQueries({ queryKey: ["user"] });
+		},
 	});
 
 	return {
