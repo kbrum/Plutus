@@ -12,3 +12,12 @@ dist-ssr
 __unconfig*
 todos.json
 .vscode
+.env
+.env.*
+!.env.example
+
+.dev.vars
+.dev.vars.*
+
+.wrangler
+.wrangler
