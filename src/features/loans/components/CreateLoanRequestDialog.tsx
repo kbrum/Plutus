@@ -205,7 +205,14 @@ function LoanRequestDialog(props: LoanRequestDialogProps) {
 											>
 												<SelectValue placeholder={placeholder} />
 											</SelectTrigger>
-											<SelectContent className="border-slate-700 bg-[#0b141d] text-slate-200">
+											<SelectContent
+												position="popper"
+												side="bottom"
+												align="start"
+												sideOffset={4}
+												avoidCollisions={false}
+												className="border-slate-700 bg-[#0b141d] text-slate-200"
+											>
 												{members.map((member) => (
 													<SelectItem key={member.id} value={member.id}>
 														{member.display_name}
