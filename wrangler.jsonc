@@ -11,5 +11,12 @@
   "vars": {
     "SENTRY_ENVIRONMENT": "production",
     "SENTRY_TRACES_SAMPLE_RATE": "0.1"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
   }
 }
