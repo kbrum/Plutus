@@ -315,6 +315,82 @@ export type Database = {
           },
         ]
       }
+      payment_proofs: {
+        Row: {
+          attached_at: string | null
+          created_at: string
+          etag: string | null
+          expires_at: string
+          id: string
+          installment_id: string
+          mime_type: string
+          object_key: string
+          original_filename: string
+          payment_id: string | null
+          size_bytes: number
+          status: Database["public"]["Enums"]["payment_proof_status"]
+          updated_at: string
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          attached_at?: string | null
+          created_at?: string
+          etag?: string | null
+          expires_at?: string
+          id?: string
+          installment_id: string
+          mime_type: string
+          object_key: string
+          original_filename: string
+          payment_id?: string | null
+          size_bytes: number
+          status?: Database["public"]["Enums"]["payment_proof_status"]
+          updated_at?: string
+          uploaded_at?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          attached_at?: string | null
+          created_at?: string
+          etag?: string | null
+          expires_at?: string
+          id?: string
+          installment_id?: string
+          mime_type?: string
+          object_key?: string
+          original_filename?: string
+          payment_id?: string | null
+          size_bytes?: number
+          status?: Database["public"]["Enums"]["payment_proof_status"]
+          updated_at?: string
+          uploaded_at?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_proofs_installment_id_fkey"
+            columns: ["installment_id"]
+            isOneToOne: false
+            referencedRelation: "installments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_proofs_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_proofs_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -389,6 +465,27 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      confirm_installment_payment: {
+        Args: { p_payment_id: string }
+        Returns: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          installment_id: string
+          notes: string | null
+          paid_at: string
+          reported_by: string
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_loan_proposal: {
         Args: {
           p_amount: number
@@ -415,6 +512,48 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "loan_proposals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      record_installment_payment: {
+        Args: { p_installment_id: string; p_paid_at: string }
+        Returns: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          installment_id: string
+          notes: string | null
+          paid_at: string
+          reported_by: string
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reject_installment_payment: {
+        Args: { p_payment_id: string }
+        Returns: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          installment_id: string
+          notes: string | null
+          paid_at: string
+          reported_by: string
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -461,6 +600,27 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      report_installment_payment: {
+        Args: { p_installment_id: string; p_paid_at: string }
+        Returns: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          installment_id: string
+          notes: string | null
+          paid_at: string
+          reported_by: string
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       withdraw_loan_proposal: {
         Args: { p_proposal_id: string }
         Returns: {
@@ -498,6 +658,7 @@ export type Database = {
         | "rejected"
         | "cancelled"
       loan_status: "active" | "paid" | "overdue" | "cancelled"
+      payment_proof_status: "pending" | "uploaded" | "attached"
       payment_status: "reported" | "confirmed" | "rejected"
     }
     CompositeTypes: {
