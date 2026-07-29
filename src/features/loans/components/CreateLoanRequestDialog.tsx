@@ -13,22 +13,43 @@ import {
 } from "#/components/ui/dialog";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "#/components/ui/select";
 import { Textarea } from "#/components/ui/textarea";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "#/components/ui/tooltip";
+import { useGetMembers } from "#/features/members/hooks/useMembers";
 import { useCreateLoanRequest } from "../hooks/useLoanRequests";
 import {
 	type CreateLoanRequestSchema,
 	createLoanRequestSchema,
 } from "../schemas/loans.requests.schemas";
 
-type CreateLoanRequestDialogProps = {
+type FixedLenderProps = {
 	lenderId: string;
 	lenderName: string;
+	members?: never;
+	isMembersLoading?: never;
+	isMembersError?: never;
 };
+
+type SelectableLenderProps = {
+	lenderId?: never;
+	lenderName?: never;
+	members: Array<{ id: string; display_name: string }>;
+	isMembersLoading: boolean;
+	isMembersError: boolean;
+};
+
+type LoanRequestDialogProps = FixedLenderProps | SelectableLenderProps;
 
 const amountFormatter = new Intl.NumberFormat("pt-BR", {
 	maximumFractionDigits: 0,
@@ -46,14 +67,13 @@ function getErrorMessage(error: unknown) {
 	return "Valor inválido";
 }
 
-export function CreateLoanRequestDialog({
-	lenderId,
-	lenderName,
-}: CreateLoanRequestDialogProps) {
+function LoanRequestDialog(props: LoanRequestDialogProps) {
 	const [open, setOpen] = useState(false);
 	const { createLoanRequest, isLoading } = useCreateLoanRequest();
+	const hasFixedLender = props.lenderId !== undefined;
+	const members = props.members ?? [];
 	const defaultValues: CreateLoanRequestSchema = {
-		lenderId,
+		lenderId: props.lenderId ?? "",
 		requestedAmount: 0,
 	};
 	const form = useForm({
@@ -62,10 +82,14 @@ export function CreateLoanRequestDialog({
 			onSubmit: createLoanRequestSchema,
 		},
 		onSubmit: async ({ value }) => {
+			const selectedLenderName = hasFixedLender
+				? props.lenderName
+				: members.find((member) => member.id === value.lenderId)?.display_name;
+
 			try {
 				await createLoanRequest(value);
 				toast.success("Solicitação enviada", {
-					description: `${lenderName} receberá seu pedido de empréstimo.`,
+					description: `${selectedLenderName ?? "O membro selecionado"} receberá seu pedido de empréstimo.`,
 				});
 				form.reset();
 				setOpen(false);
@@ -86,27 +110,38 @@ export function CreateLoanRequestDialog({
 				}
 			}}
 		>
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<Button
-						type="button"
-						variant="outline"
-						size="icon"
-						aria-label={`Fazer solicitação de empréstimo para ${lenderName}`}
-						className="size-10 rounded-xl border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-emerald-400/30 hover:!bg-emerald-400/10 hover:!text-emerald-300"
-						onClick={() => setOpen(true)}
+			{hasFixedLender ? (
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							type="button"
+							variant="outline"
+							size="icon"
+							aria-label={`Fazer solicitação de empréstimo para ${props.lenderName}`}
+							className="size-10 rounded-xl border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-emerald-400/30 hover:!bg-emerald-400/10 hover:!text-emerald-300"
+							onClick={() => setOpen(true)}
+						>
+							<Banknote className="size-[1.1rem]" />
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent
+						side="top"
+						sideOffset={8}
+						className="border border-emerald-300/15 bg-[#111d1b] text-emerald-100"
 					>
-						<Banknote className="size-[1.1rem]" />
-					</Button>
-				</TooltipTrigger>
-				<TooltipContent
-					side="top"
-					sideOffset={8}
-					className="border border-emerald-300/15 bg-[#111d1b] text-emerald-100"
+						Fazer solicitação de empréstimo
+					</TooltipContent>
+				</Tooltip>
+			) : (
+				<Button
+					type="button"
+					className="h-10 rounded-xl bg-amber-400 px-4 font-bold text-slate-950 hover:bg-amber-300"
+					onClick={() => setOpen(true)}
 				>
-					Fazer solicitação de empréstimo
-				</TooltipContent>
-			</Tooltip>
+					<Banknote />
+					Nova solicitação
+				</Button>
+			)}
 
 			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] p-0 text-slate-100 sm:max-w-lg">
 				<div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.11),transparent_44%)] px-6 py-5">
@@ -118,8 +153,9 @@ export function CreateLoanRequestDialog({
 							Solicitar empréstimo
 						</DialogTitle>
 						<DialogDescription className="leading-6 text-slate-500">
-							Envie um pedido para {lenderName}. As condições serão definidas na
-							etapa de negociação.
+							{hasFixedLender
+								? `Envie um pedido para ${props.lenderName}. As condições serão definidas na etapa de negociação.`
+								: "Escolha um membro e envie seu pedido. As condições serão definidas na etapa de negociação."}
 						</DialogDescription>
 					</DialogHeader>
 				</div>
@@ -133,6 +169,61 @@ export function CreateLoanRequestDialog({
 						void form.handleSubmit();
 					}}
 				>
+					{hasFixedLender ? null : (
+						<form.Field name="lenderId">
+							{(field) => {
+								const error = field.state.meta.errors[0];
+								const placeholder = props.isMembersLoading
+									? "Carregando membros..."
+									: props.isMembersError
+										? "Não foi possível carregar os membros"
+										: members.length === 0
+											? "Nenhum membro disponível"
+											: "Selecione um membro";
+
+								return (
+									<div className="space-y-2.5">
+										<Label
+											htmlFor={field.name}
+											className="text-[0.68rem] font-bold tracking-[0.16em] text-slate-400 uppercase"
+										>
+											Enviar solicitação para
+										</Label>
+										<Select
+											value={field.state.value || undefined}
+											disabled={
+												props.isMembersLoading ||
+												props.isMembersError ||
+												members.length === 0
+											}
+											onValueChange={field.handleChange}
+										>
+											<SelectTrigger
+												id={field.name}
+												aria-invalid={Boolean(error)}
+												className="h-12 w-full rounded-xl border-slate-700/80 bg-slate-950/45 text-slate-100 shadow-none focus-visible:border-teal-400/60 focus-visible:ring-teal-400/15"
+											>
+												<SelectValue placeholder={placeholder} />
+											</SelectTrigger>
+											<SelectContent className="border-slate-700 bg-[#0b141d] text-slate-200">
+												{members.map((member) => (
+													<SelectItem key={member.id} value={member.id}>
+														{member.display_name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{error ? (
+											<p className="text-xs text-rose-300">
+												{getErrorMessage(error)}
+											</p>
+										) : null}
+									</div>
+								);
+							}}
+						</form.Field>
+					)}
+
 					<form.Field name="requestedAmount">
 						{(field) => {
 							const error = field.state.meta.errors[0];
@@ -252,5 +343,21 @@ export function CreateLoanRequestDialog({
 				</form>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+export function CreateLoanRequestDialog(props: FixedLenderProps) {
+	return <LoanRequestDialog {...props} />;
+}
+
+export function CreateLoanRequestWithMemberDialog() {
+	const { members: response, isLoading, isError } = useGetMembers();
+
+	return (
+		<LoanRequestDialog
+			members={response?.members ?? []}
+			isMembersLoading={isLoading}
+			isMembersError={isError}
+		/>
 	);
 }

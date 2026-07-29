@@ -4,7 +4,8 @@
 
 - [x] Criar a rota de layout `_authenticated` com protecao de sessao e `Outlet`.
 - [x] Adicionar sidebar visual e area de conteudo ao layout autenticado.
-- [x] Adicionar navegacao para Dashboard, Membros, Solicitacoes, Negociacoes, Emprestimos, Parcelas, Pagamentos e Perfil.
+- [x] Adicionar navegacao para Dashboard, Membros, Meus Emprestimos, Parcelas, Pagamentos e Perfil.
+- [x] Consolidar solicitacoes, propostas e contratos em Meus Emprestimos.
 - [x] Criar as rotas e paginas base dos modulos exibidos na sidebar.
 - [x] Exibir nome, email e iniciais do usuario atual na sidebar.
 - [x] Implementar logout.
@@ -25,36 +26,47 @@
 ## 3. Solicitacoes de emprestimo
 
 - [x] Criar solicitacao com credor pre-selecionado, valor e mensagem opcional.
-- [x] Listar solicitacoes enviadas e recebidas.
+- [x] Listar solicitacoes enviadas e recebidas em paginas e rotas separadas.
+- [x] Formatar o valor monetario durante o preenchimento da solicitacao.
+- [x] Adicionar a acao visual de aceitar ou rejeitar solicitacoes recebidas.
+- [x] Permitir que o solicitante cancele uma request `pending` atualizando `status` e `cancelled_at`.
+- [x] Validar criacao e cancelamento com Zod, sessao e RLS.
+- [x] Manter a permissao de `DELETE` restrita ao solicitante para uso futuro.
+- [x] Criar dialog de historico para solicitacoes enviadas e recebidas.
+- [x] Listar no historico requests com status diferente de `pending`.
+- [x] Adicionar estados de carregamento, erro e lista vazia ao historico.
+- [x] Remover `negotiating` de `loan_request_status` e o trigger associado.
+- [x] Definir que `accepted` significa que o credor aceitou negociar a request.
+- [x] Implementar a acao de aceitar uma solicitacao recebida.
+- [x] Implementar a acao de rejeitar uma solicitacao recebida.
+- [x] Atualizar `status` e `updated_at` de forma segura ao aceitar ou rejeitar.
 - [ ] Adicionar filtros por papel e status.
 - [ ] Criar pagina de detalhes da solicitacao.
-- [ ] Permitir que o solicitante cancele uma solicitacao pendente ou em negociacao.
-- [ ] Permitir que o credor rejeite uma solicitacao.
-- [ ] Validar entradas com Zod e autorizacao no servidor.
-- [ ] Implementar RPCs seguras para cancelamento e rejeicao.
+- [ ] Testar que terceiros nao conseguem aceitar, rejeitar ou excluir requests.
 
 ## 4. Propostas e contrapropostas
 
-- [ ] Criar proposta com valor, juros, parcelas, primeiro vencimento e mensagem.
+- [x] Permitir proposals no banco somente para requests `accepted`.
+- [x] Listar requests aceitas que podem iniciar ou continuar uma negociacao.
+- [x] Criar proposta com valor, juros, parcelas, primeiro vencimento e mensagem.
 - [ ] Calcular e exibir principal, juros, total e valor estimado das parcelas.
-- [ ] Criar contraproposta vinculada por `parent_proposal_id`.
-- [ ] Exibir a negociacao como uma linha do tempo.
-- [ ] Permitir que o autor retire uma proposta pendente.
-- [ ] Permitir que o destinatario rejeite uma proposta pendente.
-- [ ] Marcar a proposta anterior como `superseded` ao contrapropor.
-- [ ] Implementar RPCs seguras para retirada e rejeicao.
+- [x] Criar contraproposta vinculada por `parent_proposal_id`.
+- [x] Exibir a negociacao como uma linha do tempo.
+- [x] Permitir que o autor retire uma proposta pendente.
+- [x] Permitir que o destinatario rejeite uma proposta pendente.
+- [x] Marcar a proposta anterior como `superseded` ao contrapropor.
+- [x] Implementar RPCs seguras para retirada e rejeicao.
 - [ ] Remover o estado `expired` do enum se ele continuar sem uso no MVP.
 
 ## 5. Aceitacao e formalizacao
 
-- [ ] Implementar uma RPC transacional para aceitar uma proposta.
-- [ ] Validar participantes e estados atuais da solicitacao e da proposta.
-- [ ] Garantir que somente o destinatario possa aceitar a proposta.
-- [ ] Marcar a solicitacao como `accepted`.
-- [ ] Marcar a proposta escolhida como `accepted`.
-- [ ] Encerrar as demais propostas pendentes da negociacao.
-- [ ] Criar o registro em `loans` com juros simples.
-- [ ] Gerar todas as parcelas em `installments` na mesma transacao.
+- [x] Implementar uma RPC transacional para aceitar uma proposta.
+- [x] Validar que a request esta `accepted` e que a proposta esta `pending`.
+- [x] Garantir que somente o destinatario possa aceitar a proposta.
+- [x] Marcar a proposta escolhida como `accepted`.
+- [x] Encerrar as demais propostas pendentes da negociacao.
+- [x] Criar o registro em `loans` com juros simples.
+- [x] Gerar todas as parcelas em `installments` na mesma transacao.
 - [ ] Testar concorrencia para impedir aceitacao duplicada.
 
 ## 6. Emprestimos e parcelas
@@ -98,6 +110,9 @@
 - [ ] Testar o fluxo completo de solicitacao ate quitacao.
 - [ ] Ativar protecao contra senhas vazadas no Supabase Auth.
 - [ ] Configurar Sentry e observabilidade.
+- [ ] Criar bucket S3 privado para avatares e comprovantes.
+- [ ] Configurar IAM minimo, CORS e lifecycle do bucket S3.
+- [ ] Implementar uploads e downloads com URLs pre-assinadas.
 - [ ] Executar `pnpm check`, `pnpm typecheck` e `pnpm build`.
 
 ## 10. Deploy
@@ -110,8 +125,9 @@
 
 ## Primeiro marco funcional
 
-- [ ] Selecionar participante.
-- [ ] Criar solicitacao.
-- [ ] Negociar proposta e contraproposta.
-- [ ] Aceitar proposta.
-- [ ] Gerar emprestimo e parcelas automaticamente.
+- [x] Selecionar participante.
+- [x] Criar solicitacao.
+- [x] Aceitar uma solicitacao para iniciar a negociacao.
+- [x] Negociar proposta e contraproposta.
+- [x] Aceitar proposta.
+- [x] Gerar emprestimo e parcelas automaticamente.
