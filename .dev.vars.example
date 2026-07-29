@@ -1,0 +1,3 @@
+SENTRY_DSN=https://your-public-key@your-org.ingest.sentry.io/your-project-id
+SENTRY_ENVIRONMENT=development
+SENTRY_TRACES_SAMPLE_RATE=1

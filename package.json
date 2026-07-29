@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
-    "@sentry/tanstackstart-react": "^10.67.0",
+    "@sentry/cloudflare": "^10.68.0",
+    "@sentry/tanstackstart-react": "^10.68.0",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "@tailwindcss/vite": "^4.1.18",

@@ -117,7 +117,8 @@
 - [ ] Testar RLS e autorizacao como credor, devedor e terceiro.
 - [ ] Testar o fluxo completo de solicitacao ate quitacao.
 - [ ] Ativar protecao contra senhas vazadas no Supabase Auth.
-- [ ] Configurar Sentry e observabilidade.
+- [x] Configurar Sentry para erros, tracing e logs no cliente e no Cloudflare Worker.
+- [ ] Confirmar o primeiro evento no Sentry apos configurar DSN e token de source maps.
 - [ ] Criar bucket S3 privado para avatares e comprovantes.
 - [ ] Configurar IAM minimo, CORS e lifecycle do bucket S3.
 - [ ] Implementar uploads e downloads com URLs pre-assinadas.

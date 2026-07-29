@@ -1,10 +1,17 @@
+import * as Sentry from "@sentry/tanstackstart-react";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, RefreshCw, TriangleAlert } from "lucide-react";
+import { useEffect } from "react";
 
 import { Button } from "#/components/ui/button";
 
-export function GlobalErrorPage() {
+export function GlobalErrorPage({ error }: ErrorComponentProps) {
 	const router = useRouter();
+
+	useEffect(() => {
+		Sentry.captureException(error);
+	}, [error]);
 
 	return (
 		<main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#070c12] px-6 py-16 text-slate-100">

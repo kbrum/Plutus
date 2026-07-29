@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/tanstackstart-react";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { GlobalErrorPage } from "./features/system/pages/GlobalErrorPage";
@@ -24,6 +25,12 @@ export function getRouter() {
 	});
 
 	setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient });
+
+	if (!router.isServer && import.meta.env.VITE_SENTRY_DSN) {
+		Sentry.addIntegration(
+			Sentry.tanstackRouterBrowserTracingIntegration(router),
+		);
+	}
 
 	return router;
 }
