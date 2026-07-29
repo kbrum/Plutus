@@ -27,7 +27,6 @@ const statusLabels = {
 	rejected: "Recusada",
 	withdrawn: "Retirada",
 	superseded: "Substituída",
-	expired: "Expirada",
 } as const;
 
 type LoanProposalTimelineDialogProps = {

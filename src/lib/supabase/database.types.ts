@@ -492,7 +492,6 @@ export type Database = {
         | "rejected"
         | "withdrawn"
         | "superseded"
-        | "expired"
       loan_request_status:
         | "pending"
         | "accepted"

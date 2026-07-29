@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
+	getLoanByIdFn,
 	getLoansFn,
 	getReceivedLoansHistoryFn,
 	getSentLoansHistoryFn,
@@ -19,6 +20,21 @@ export function useGetLoans() {
 
 	return {
 		loans: query.data ?? [],
+		isLoading: query.isLoading,
+		isError: query.isError,
+	};
+}
+
+export function useGetLoan(loanId: string) {
+	const getLoan = useServerFn(getLoanByIdFn);
+	const query = useQuery({
+		queryKey: [...loansQueryKey, loanId],
+		queryFn: () => getLoan({ data: { loanId } }),
+		enabled: Boolean(loanId),
+	});
+
+	return {
+		loan: query.data,
 		isLoading: query.isLoading,
 		isError: query.isError,
 	};

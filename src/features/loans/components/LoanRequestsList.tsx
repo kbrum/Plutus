@@ -215,9 +215,7 @@ export function LoanRequestsList({
 									key={request.id}
 									className={`rounded-2xl border border-slate-800/90 bg-[#0c141e] transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 								>
-									<div
-										className={`flex flex-col justify-between gap-4 ${compact ? "" : "sm:flex-row sm:items-start"}`}
-									>
+									<div className="flex items-start justify-between gap-4">
 										<div className="flex min-w-0 gap-4">
 											<div
 												className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${
@@ -243,7 +241,7 @@ export function LoanRequestsList({
 											</div>
 										</div>
 
-										<div className="flex flex-wrap items-center gap-1.5">
+										<div className="flex shrink-0 items-center gap-1.5">
 											<span className="w-fit rounded-full border border-cyan-300/15 bg-cyan-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-cyan-200">
 												Solicitação
 											</span>

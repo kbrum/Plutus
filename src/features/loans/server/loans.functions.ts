@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createLoanSchema } from "../schemas/loans.schemas";
+import { createLoanSchema, loanIdSchema } from "../schemas/loans.schemas";
 import {
 	createLoan,
+	getLoanById,
 	getLoans,
 	getReceivedLoansHistory,
 	getSentLoansHistory,
@@ -10,6 +11,12 @@ import {
 export const getLoansFn = createServerFn({
 	method: "GET",
 }).handler(() => getLoans());
+
+export const getLoanByIdFn = createServerFn({
+	method: "GET",
+})
+	.validator(loanIdSchema)
+	.handler(({ data }) => getLoanById(data.loanId));
 
 export const getSentLoansHistoryFn = createServerFn({
 	method: "GET",

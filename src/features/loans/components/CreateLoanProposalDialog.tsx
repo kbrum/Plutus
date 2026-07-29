@@ -33,6 +33,7 @@ type CreateLoanProposalDialogProps = {
 	parentProposalId?: string;
 	counterpartName: string;
 	initialValues?: ProposalTerms;
+	triggerLabel?: string;
 };
 
 const amountFormatter = new Intl.NumberFormat("pt-BR", {
@@ -56,6 +57,7 @@ export function CreateLoanProposalDialog({
 	parentProposalId,
 	counterpartName,
 	initialValues,
+	triggerLabel,
 }: CreateLoanProposalDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [interestRateInput, setInterestRateInput] = useState("");
@@ -116,13 +118,14 @@ export function CreateLoanProposalDialog({
 				onClick={handleOpen}
 			>
 				<Pencil />
-				{isCounterproposal
-					? draft
-						? "Ajustar contraproposta"
-						: "Contrapropor"
-					: draft
-						? "Ajustar termos"
-						: "Definir termos"}
+				{triggerLabel ??
+					(isCounterproposal
+						? draft
+							? "Ajustar contraproposta"
+							: "Contrapropor"
+						: draft
+							? "Ajustar termos"
+							: "Definir termos")}
 			</Button>
 
 			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] p-0 text-slate-100 sm:max-w-xl">
@@ -188,46 +191,55 @@ export function CreateLoanProposalDialog({
 						</form.Field>
 
 						<form.Field name="interestRate">
-							{(field) => (
-								<div className="space-y-2">
-									<Label
-										htmlFor={field.name}
-										className="text-xs text-slate-400"
-									>
-										Taxa de juros (%)
-									</Label>
-									<Input
-										id={field.name}
-										type="text"
-										inputMode="decimal"
-										autoComplete="off"
-										placeholder="Ex.: 2,5"
-										value={interestRateInput}
-										className="h-11 rounded-xl border-slate-700 bg-slate-950/45"
-										onBlur={field.handleBlur}
-										onChange={(event) => {
-											const input = event.target.value;
-											const normalizedValue = input
-												.replace(/%/g, "")
-												.replace(",", ".")
-												.replace(/[^\d.+-]/g, "")
-												.trim();
+							{(field) => {
+								const exceedsMaximum = field.state.value > 100;
 
-											setInterestRateInput(input);
-											field.handleChange(
-												normalizedValue === ""
-													? Number.NaN
-													: Number(normalizedValue),
-											);
-										}}
-									/>
-									{field.state.meta.errors[0] ? (
-										<p className="text-xs text-rose-300">
-											{getErrorMessage(field.state.meta.errors[0])}
-										</p>
-									) : null}
-								</div>
-							)}
+								return (
+									<div className="space-y-2">
+										<Label
+											htmlFor={field.name}
+											className="text-xs text-slate-400"
+										>
+											Taxa de juros (%)
+										</Label>
+										<Input
+											id={field.name}
+											type="text"
+											inputMode="decimal"
+											autoComplete="off"
+											placeholder="Ex.: 2,5"
+											value={interestRateInput}
+											aria-invalid={exceedsMaximum}
+											className="h-11 rounded-xl border-slate-700 bg-slate-950/45"
+											onBlur={field.handleBlur}
+											onChange={(event) => {
+												const input = event.target.value;
+												const normalizedValue = input
+													.replace(/%/g, "")
+													.replace(",", ".")
+													.replace(/[^\d.+-]/g, "")
+													.trim();
+
+												setInterestRateInput(input);
+												field.handleChange(
+													normalizedValue === ""
+														? Number.NaN
+														: Number(normalizedValue),
+												);
+											}}
+										/>
+										{exceedsMaximum ? (
+											<p className="text-xs text-rose-300">
+												A taxa de juros máxima é 100%.
+											</p>
+										) : field.state.meta.errors[0] ? (
+											<p className="text-xs text-rose-300">
+												{getErrorMessage(field.state.meta.errors[0])}
+											</p>
+										) : null}
+									</div>
+								);
+							}}
 						</form.Field>
 
 						<form.Field name="installmentCount">
@@ -307,29 +319,34 @@ export function CreateLoanProposalDialog({
 					</form.Field>
 
 					<form.Subscribe
-						selector={(state) => [state.canSubmit, state.isSubmitting] as const}
+						selector={(state) => [state.values, state.isSubmitting] as const}
 					>
-						{([canSubmit, isSubmitting]) => (
-							<DialogFooter>
-								<Button
-									type="button"
-									variant="ghost"
-									disabled={isSubmitting}
-									className="rounded-xl text-slate-400"
-									onClick={() => setOpen(false)}
-								>
-									Cancelar
-								</Button>
-								<Button
-									type="submit"
-									disabled={!canSubmit || isSubmitting}
-									className="rounded-xl bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
-								>
-									<Save />
-									Salvar
-								</Button>
-							</DialogFooter>
-						)}
+						{([values, isSubmitting]) => {
+							const canSave =
+								createLoanProposalSchema.safeParse(values).success;
+
+							return (
+								<DialogFooter>
+									<Button
+										type="button"
+										variant="ghost"
+										disabled={isSubmitting}
+										className="rounded-xl text-slate-400"
+										onClick={() => setOpen(false)}
+									>
+										Cancelar
+									</Button>
+									<Button
+										type="submit"
+										disabled={!canSave || isSubmitting}
+										className="rounded-xl bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
+									>
+										<Save />
+										Salvar
+									</Button>
+								</DialogFooter>
+							);
+						}}
 					</form.Subscribe>
 				</form>
 			</DialogContent>

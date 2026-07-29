@@ -1,4 +1,18 @@
-import { CalendarDays, CircleDollarSign, HandCoins, Inbox } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import {
+	CalendarDays,
+	CircleDollarSign,
+	Eye,
+	HandCoins,
+	Inbox,
+} from "lucide-react";
+import { Button } from "#/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "#/components/ui/tooltip";
 import { useGetLoans } from "../hooks/useLoans";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -51,77 +65,102 @@ export function ActiveLoansList() {
 	}
 
 	return (
-		<ul className="space-y-3">
-			{loans.map((loan) => {
-				const isLender = loan.role === "lender";
-				const counterpart = isLender
-					? loan.borrower?.display_name
-					: loan.lender?.display_name;
+		<TooltipProvider delayDuration={250}>
+			<ul className="space-y-3">
+				{loans.map((loan) => {
+					const isLender = loan.role === "lender";
+					const counterpart = isLender
+						? loan.borrower?.display_name
+						: loan.lender?.display_name;
 
-				return (
-					<li
-						key={loan.id}
-						className="rounded-2xl border border-slate-800/90 bg-[#0c141e] p-5 transition-colors hover:border-emerald-400/20"
-					>
-						<div className="flex items-start justify-between gap-3">
-							<div className="flex min-w-0 gap-3">
-								<span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-400/8 text-emerald-300">
-									<HandCoins className="size-5" />
-								</span>
-								<div className="min-w-0">
-									<p className="text-[0.68rem] font-semibold tracking-[0.1em] text-slate-500 uppercase">
-										{isLender ? "Você emprestou para" : "Você recebeu de"}
-									</p>
-									<p className="mt-1 truncate text-sm font-semibold text-slate-200">
-										{counterpart ?? "Membro indisponível"}
-									</p>
+					return (
+						<li
+							key={loan.id}
+							className="rounded-2xl border border-slate-800/90 bg-[#0c141e] p-5 transition-colors hover:border-emerald-400/20"
+						>
+							<div className="flex items-start justify-between gap-3">
+								<div className="flex min-w-0 gap-3">
+									<span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-400/8 text-emerald-300">
+										<HandCoins className="size-5" />
+									</span>
+									<div className="min-w-0">
+										<p className="text-[0.68rem] font-semibold tracking-[0.1em] text-slate-500 uppercase">
+											{isLender ? "Você emprestou para" : "Você recebeu de"}
+										</p>
+										<p className="mt-1 truncate text-sm font-semibold text-slate-200">
+											{counterpart ?? "Membro indisponível"}
+										</p>
+									</div>
+								</div>
+								<div className="flex shrink-0 items-center gap-1.5">
+									<span className="rounded-full border border-emerald-300/15 bg-emerald-400/8 px-2.5 py-1 text-[0.65rem] font-bold text-emerald-200">
+										Empréstimo
+									</span>
+									<span
+										className={`rounded-full border px-2.5 py-1 text-[0.65rem] font-bold ${
+											loan.status === "overdue"
+												? "border-rose-300/15 bg-rose-400/8 text-rose-300"
+												: "border-slate-600 bg-slate-800/70 text-slate-300"
+										}`}
+									>
+										{loan.status === "overdue" ? "Em atraso" : "Ativo"}
+									</span>
 								</div>
 							</div>
-							<div className="flex flex-wrap justify-end gap-1.5">
-								<span className="rounded-full border border-emerald-300/15 bg-emerald-400/8 px-2.5 py-1 text-[0.65rem] font-bold text-emerald-200">
-									Empréstimo
-								</span>
-								<span
-									className={`rounded-full border px-2.5 py-1 text-[0.65rem] font-bold ${
-										loan.status === "overdue"
-											? "border-rose-300/15 bg-rose-400/8 text-rose-300"
-											: "border-slate-600 bg-slate-800/70 text-slate-300"
-									}`}
-								>
-									{loan.status === "overdue" ? "Em atraso" : "Ativo"}
-								</span>
+
+							<p className="mt-5 flex items-center gap-2 border-t border-slate-800/80 pt-4 text-lg font-bold text-slate-100">
+								<CircleDollarSign className="size-4 text-amber-400" />
+								{currencyFormatter.format(loan.principal_amount)}
+							</p>
+
+							<div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+								<p>
+									Juros
+									<strong className="mt-1 block text-slate-200">
+										{loan.interest_rate}%
+									</strong>
+								</p>
+								<p>
+									Parcelas
+									<strong className="mt-1 block text-slate-200">
+										{loan.installment_count}x
+									</strong>
+								</p>
 							</div>
-						</div>
 
-						<p className="mt-5 flex items-center gap-2 border-t border-slate-800/80 pt-4 text-lg font-bold text-slate-100">
-							<CircleDollarSign className="size-4 text-amber-400" />
-							{currencyFormatter.format(loan.principal_amount)}
-						</p>
-
-						<div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
-							<p>
-								Juros
-								<strong className="mt-1 block text-slate-200">
-									{loan.interest_rate}%
-								</strong>
-							</p>
-							<p>
-								Parcelas
-								<strong className="mt-1 block text-slate-200">
-									{loan.installment_count}x
-								</strong>
-							</p>
-						</div>
-
-						<p className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
-							<CalendarDays className="size-3.5" /> Primeiro vencimento em
-							{dateFormatter.format(
-								new Date(`${loan.first_due_date}T00:00:00`),
-							)}
-						</p>
-					</li>
-				);
-			})}
-		</ul>
+							<div className="mt-4 flex items-center justify-between gap-3">
+								<p className="flex items-center gap-1.5 text-xs text-slate-500">
+									<CalendarDays className="size-3.5" /> Primeiro vencimento em{" "}
+									{dateFormatter.format(
+										new Date(`${loan.first_due_date}T00:00:00`),
+									)}
+								</p>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											asChild
+											variant="outline"
+											size="icon"
+											className="size-9 shrink-0 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-teal-400/30 hover:!bg-teal-400/10 hover:!text-teal-300"
+										>
+											<Link
+												to="/loans/$loanId"
+												params={{ loanId: loan.id }}
+												aria-label="Visualizar detalhes do empréstimo"
+											>
+												<Eye />
+											</Link>
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent className="border border-teal-300/15 bg-[#101d20] text-teal-100">
+										Visualizar detalhes do empréstimo
+									</TooltipContent>
+								</Tooltip>
+							</div>
+						</li>
+					);
+				})}
+			</ul>
+		</TooltipProvider>
 	);
 }

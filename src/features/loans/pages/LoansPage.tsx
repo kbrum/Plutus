@@ -122,17 +122,15 @@ function WorkflowColumn({
 			awaitingTerms.loanRequests.length > 0);
 	const isEmpty =
 		!showRequests && !showProposals && !showSetups && !showAwaitingTerms;
+	const count =
+		requests.loanRequests.length +
+		proposals.loanProposals.length +
+		(direction === "received"
+			? setups.loanRequests.length
+			: awaitingTerms.loanRequests.length);
 
 	return (
-		<BoardColumn
-			{...columnProps}
-			count={
-				requests.loanRequests.length +
-				proposals.loanProposals.length +
-				setups.loanRequests.length +
-				awaitingTerms.loanRequests.length
-			}
-		>
+		<BoardColumn {...columnProps} count={count}>
 			{isEmpty ? (
 				<EmptyColumn>{emptyMessage}</EmptyColumn>
 			) : (

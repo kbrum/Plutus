@@ -1,0 +1,1 @@
+-- Integration tests create and remove their own isolated fixtures.

@@ -20,6 +20,13 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "#/components/ui/dialog";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "#/components/ui/select";
 import { useGetLoanProposalsHistory } from "../hooks/useLoanProposals";
 import {
 	type LoanRequestDirection,
@@ -51,7 +58,6 @@ const proposalStatusLabels = {
 	rejected: "Recusada",
 	withdrawn: "Retirada pelo autor",
 	superseded: "Substituída por contraproposta",
-	expired: "Expirada",
 } as const;
 
 const loanStatusLabels = {
@@ -87,6 +93,7 @@ type HistoryItem = {
 	kind: keyof typeof kindConfig;
 	counterpart: string;
 	amount: number;
+	statusKey: string;
 	status: string;
 	createdAt: string;
 	description?: string | null;
@@ -95,9 +102,22 @@ type HistoryItem = {
 
 const loadingItems = ["history-1", "history-2", "history-3"];
 
+const statusFilterOptions = [
+	{ value: "all", label: "Todos os status" },
+	{ value: "pending", label: "Pendentes" },
+	{ value: "accepted", label: "Aceitos" },
+	{ value: "active", label: "Ativos" },
+	{ value: "rejected", label: "Recusados" },
+	{ value: "cancelled", label: "Cancelados" },
+	{ value: "withdrawn", label: "Retirados" },
+	{ value: "superseded", label: "Substituídos" },
+	{ value: "paid", label: "Quitados" },
+] as const;
+
 export function LoanHistoryDialog() {
 	const [open, setOpen] = useState(false);
 	const [direction, setDirection] = useState<LoanRequestDirection>("received");
+	const [statusFilter, setStatusFilter] = useState("all");
 	const requests = useGetLoanRequestsHistory(direction, open);
 	const proposals = useGetLoanProposalsHistory(direction, open);
 	const loans = useGetLoansHistory(direction, open);
@@ -115,6 +135,7 @@ export function LoanHistoryDialog() {
 					? request.lender?.display_name
 					: request.borrower?.display_name) ?? "Membro indisponível",
 			amount: request.requested_amount,
+			statusKey: request.status,
 			status: requestStatusLabels[request.status],
 			createdAt: request.created_at,
 			description: request.message,
@@ -132,6 +153,7 @@ export function LoanHistoryDialog() {
 				kind: "proposal" as const,
 				counterpart: counterpart ?? "Membro indisponível",
 				amount: proposal.amount,
+				statusKey: proposal.status,
 				status: proposalStatusLabels[proposal.status],
 				createdAt: proposal.created_at,
 				description: proposal.message,
@@ -145,6 +167,7 @@ export function LoanHistoryDialog() {
 				(isSent ? loan.borrower?.display_name : loan.lender?.display_name) ??
 				"Membro indisponível",
 			amount: loan.principal_amount,
+			statusKey: loan.status,
 			status: loanStatusLabels[loan.status],
 			createdAt: loan.paid_at ?? loan.created_at,
 			details: `${loan.interest_rate}% de juros · ${loan.installment_count} parcelas · Total ${currencyFormatter.format(loan.total_amount)}`,
@@ -154,6 +177,10 @@ export function LoanHistoryDialog() {
 			new Date(secondItem.createdAt).getTime() -
 			new Date(firstItem.createdAt).getTime(),
 	);
+	const filteredHistoryItems =
+		statusFilter === "all"
+			? historyItems
+			: historyItems.filter((item) => item.statusKey === statusFilter);
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -177,41 +204,55 @@ export function LoanHistoryDialog() {
 					</DialogDescription>
 				</DialogHeader>
 
-				<div
-					role="tablist"
-					aria-label="Direção do histórico"
-					className="grid grid-cols-2 rounded-xl border border-slate-800 bg-slate-950/40 p-1"
-				>
-					<Button
-						type="button"
-						role="tab"
-						aria-selected={direction === "received"}
-						variant="ghost"
-						className={`rounded-lg ${
-							direction === "received"
-								? "bg-teal-400/10 text-teal-200"
-								: "text-slate-500 hover:text-slate-200"
-						}`}
-						onClick={() => setDirection("received")}
+				<div className="grid gap-3 sm:grid-cols-[1fr_13rem]">
+					<div
+						role="tablist"
+						aria-label="Papel no histórico"
+						className="grid grid-cols-2 rounded-xl border border-slate-800 bg-slate-950/40 p-1"
 					>
-						<ArrowDownLeft />
-						Recebidos
-					</Button>
-					<Button
-						type="button"
-						role="tab"
-						aria-selected={direction === "sent"}
-						variant="ghost"
-						className={`rounded-lg ${
-							direction === "sent"
-								? "bg-amber-400/10 text-amber-200"
-								: "text-slate-500 hover:text-slate-200"
-						}`}
-						onClick={() => setDirection("sent")}
-					>
-						<ArrowUpRight />
-						Enviados
-					</Button>
+						<Button
+							type="button"
+							role="tab"
+							aria-selected={direction === "received"}
+							variant="ghost"
+							className={`rounded-lg ${
+								direction === "received"
+									? "bg-teal-400/10 text-teal-200"
+									: "text-slate-500 hover:text-slate-200"
+							}`}
+							onClick={() => setDirection("received")}
+						>
+							<ArrowDownLeft />
+							Recebidos
+						</Button>
+						<Button
+							type="button"
+							role="tab"
+							aria-selected={direction === "sent"}
+							variant="ghost"
+							className={`rounded-lg ${
+								direction === "sent"
+									? "bg-amber-400/10 text-amber-200"
+									: "text-slate-500 hover:text-slate-200"
+							}`}
+							onClick={() => setDirection("sent")}
+						>
+							<ArrowUpRight />
+							Enviados
+						</Button>
+					</div>
+					<Select value={statusFilter} onValueChange={setStatusFilter}>
+						<SelectTrigger className="h-full min-h-10 w-full rounded-xl border-slate-800 bg-slate-950/40 text-slate-300 shadow-none">
+							<SelectValue placeholder="Filtrar por status" />
+						</SelectTrigger>
+						<SelectContent className="border-slate-700 bg-[#0b141d] text-slate-200">
+							{statusFilterOptions.map((option) => (
+								<SelectItem key={option.value} value={option.value}>
+									{option.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 
 				{isLoading ? (
@@ -227,16 +268,16 @@ export function LoanHistoryDialog() {
 					<div className="rounded-2xl border border-rose-400/15 bg-rose-400/5 px-5 py-10 text-center text-sm text-rose-200">
 						Não foi possível carregar todo o histórico.
 					</div>
-				) : historyItems.length === 0 ? (
+				) : filteredHistoryItems.length === 0 ? (
 					<div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 px-5 py-14 text-center">
 						<Archive className="mx-auto size-8 text-slate-600" />
 						<p className="mt-3 text-sm font-medium text-slate-300">
-							Nenhum item {isSent ? "enviado" : "recebido"} no histórico
+							Nenhum item {isSent ? "enviado" : "recebido"} com esse filtro
 						</p>
 					</div>
 				) : (
 					<ul className="space-y-3">
-						{historyItems.map((item) => {
+						{filteredHistoryItems.map((item) => {
 							const kind = kindConfig[item.kind];
 							const KindIcon = kind.icon;
 

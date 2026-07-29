@@ -202,15 +202,17 @@ export function LoanProposalsList({
 					draft?.installmentCount ?? proposal.installment_count;
 				const firstDueDate = draft?.firstDueDate ?? proposal.first_due_date;
 				const message = draft?.message ?? proposal.message;
+				const totalAmount =
+					Math.round(amount * (1 + interestRate / 100) * 100) / 100;
+				const installmentAmount =
+					Math.round((totalAmount / installmentCount) * 100) / 100;
 
 				return (
 					<li
 						key={proposal.id}
 						className={`rounded-2xl border border-slate-800/90 bg-[#0c141e] transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 					>
-						<div
-							className={`flex flex-col justify-between gap-4 ${compact ? "" : "sm:flex-row sm:items-start"}`}
-						>
+						<div className="flex items-start justify-between gap-4">
 							<div className="flex min-w-0 gap-4">
 								<div
 									className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${
@@ -237,7 +239,7 @@ export function LoanProposalsList({
 									</p>
 								</div>
 							</div>
-							<div className="flex flex-wrap items-center gap-1.5">
+							<div className="flex shrink-0 items-center gap-1.5">
 								<span className="w-fit rounded-full border border-violet-300/15 bg-violet-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-violet-200">
 									Proposta
 								</span>
@@ -247,39 +249,49 @@ export function LoanProposalsList({
 							</div>
 						</div>
 
-						<div
-							className={`mt-5 grid grid-cols-2 gap-4 border-t border-slate-800/80 pt-4 ${compact ? "" : "sm:grid-cols-4"}`}
-						>
-							<p className="text-xs text-slate-500">
-								<span className="flex items-center gap-1.5">
-									<CircleDollarSign className="size-3.5 text-amber-400" /> Valor
-								</span>
-								<strong className="mt-1 block text-sm text-slate-200">
-									{currencyFormatter.format(amount)}
-								</strong>
+						<div className="mt-5 border-t border-slate-800/80 pt-4">
+							<p className="text-xs text-slate-500">Total do empréstimo</p>
+							<p className="mt-1 flex items-center gap-2 text-lg font-bold text-slate-100">
+								<CircleDollarSign className="size-4 text-amber-400" />
+								{currencyFormatter.format(totalAmount)}
 							</p>
-							<p className="text-xs text-slate-500">
-								<span className="flex items-center gap-1.5">
-									<Percent className="size-3.5 text-teal-400" /> Juros
-								</span>
-								<strong className="mt-1 block text-sm text-slate-200">
-									{interestRate}%
-								</strong>
-							</p>
-							<p className="text-xs text-slate-500">
-								Parcelas
-								<strong className="mt-1 block text-sm text-slate-200">
-									{installmentCount}x
-								</strong>
-							</p>
-							<p className="text-xs text-slate-500">
-								<span className="flex items-center gap-1.5">
-									<CalendarDays className="size-3.5" /> Primeiro vencimento
-								</span>
-								<strong className="mt-1 block text-sm text-slate-200">
-									{dateFormatter.format(new Date(`${firstDueDate}T00:00:00`))}
-								</strong>
-							</p>
+
+							<div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500">
+								<p className="text-xs text-slate-500">
+									<span className="flex items-center gap-1.5">
+										<Percent className="size-3.5 text-teal-400" /> Juros
+									</span>
+									<strong className="mt-1 block text-sm text-slate-200">
+										{interestRate}%
+									</strong>
+								</p>
+								<p>
+									Valor original
+									<strong className="mt-1 block text-sm text-slate-200">
+										{currencyFormatter.format(amount)}
+									</strong>
+								</p>
+								<p className="text-xs text-slate-500">
+									Parcelas
+									<strong className="mt-1 block text-sm text-slate-200">
+										{installmentCount}x
+									</strong>
+								</p>
+								<p>
+									Valor da parcela
+									<strong className="mt-1 block text-sm text-slate-200">
+										{currencyFormatter.format(installmentAmount)}
+									</strong>
+								</p>
+								<p className="col-span-2 text-xs text-slate-500">
+									<span className="flex items-center gap-1.5">
+										<CalendarDays className="size-3.5" /> Primeiro vencimento
+									</span>
+									<strong className="mt-1 block text-sm text-slate-200">
+										{dateFormatter.format(new Date(`${firstDueDate}T00:00:00`))}
+									</strong>
+								</p>
+							</div>
 						</div>
 
 						{message ? (
@@ -288,7 +300,9 @@ export function LoanProposalsList({
 							</p>
 						) : null}
 
-						<div className="mt-5 flex flex-wrap justify-end gap-2">
+						<div
+							className={`mt-5 ${isSent ? "flex flex-wrap justify-end gap-2" : "grid grid-cols-2 gap-2"}`}
+						>
 							{isSent ? (
 								<>
 									<LoanProposalTimelineDialog
@@ -312,12 +326,17 @@ export function LoanProposalsList({
 								</>
 							) : (
 								<>
+									<div className="col-span-2 [&>button]:w-full">
+										<LoanProposalTimelineDialog
+											loanRequestId={proposal.loan_request_id}
+										/>
+									</div>
 									<Button
 										type="button"
 										variant="outline"
 										size="sm"
 										disabled={isAccepting || isRejecting || isSending}
-										className="rounded-lg border-emerald-300/20 bg-emerald-400/5 text-emerald-300 shadow-none hover:!bg-emerald-400/10 hover:!text-emerald-200"
+										className="w-full rounded-lg border-emerald-300/20 bg-emerald-400/5 text-emerald-300 shadow-none hover:!bg-emerald-400/10 hover:!text-emerald-200"
 										onClick={() =>
 											void handleAccept(proposal.id, proposal.loan_request_id)
 										}
@@ -334,7 +353,7 @@ export function LoanProposalsList({
 										variant="outline"
 										size="sm"
 										disabled={isAccepting || isRejecting || isSending}
-										className="rounded-lg border-rose-300/20 bg-rose-400/5 text-rose-300 shadow-none hover:!bg-rose-400/10 hover:!text-rose-200"
+										className="w-full rounded-lg border-rose-300/20 bg-rose-400/5 text-rose-300 shadow-none hover:!bg-rose-400/10 hover:!text-rose-200"
 										onClick={() =>
 											void handleReject(proposal.id, proposal.loan_request_id)
 										}
@@ -346,36 +365,43 @@ export function LoanProposalsList({
 										)}
 										Recusar
 									</Button>
-									<CreateLoanProposalDialog
-										loanRequestId={proposal.loan_request_id}
-										parentProposalId={proposal.id}
-										counterpartName={counterpart ?? "o outro participante"}
-										initialValues={{
-											amount: proposal.amount,
-											interestRate: proposal.interest_rate,
-											installmentCount: proposal.installment_count,
-											firstDueDate: proposal.first_due_date,
-										}}
-									/>
-									<Button
-										type="button"
-										size="sm"
-										disabled={!draft || isAccepting || isRejecting || isSending}
-										className="rounded-lg bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
-										onClick={() =>
-											void handleSendCounterproposal(
-												proposal.id,
-												proposal.loan_request_id,
-											)
-										}
+									<div
+										className={`${draft ? "" : "col-span-2"} [&>button]:w-full`}
 									>
-										{isSending && isCurrentAction ? (
-											<LoaderCircle className="animate-spin" />
-										) : (
-											<Send />
-										)}
-										Enviar contraproposta
-									</Button>
+										<CreateLoanProposalDialog
+											loanRequestId={proposal.loan_request_id}
+											parentProposalId={proposal.id}
+											counterpartName={counterpart ?? "o outro participante"}
+											triggerLabel={draft ? "Ajustar termos" : "Contrapropor"}
+											initialValues={{
+												amount: proposal.amount,
+												interestRate: proposal.interest_rate,
+												installmentCount: proposal.installment_count,
+												firstDueDate: proposal.first_due_date,
+											}}
+										/>
+									</div>
+									{draft ? (
+										<Button
+											type="button"
+											size="sm"
+											disabled={isAccepting || isRejecting || isSending}
+											className="w-full rounded-lg bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
+											onClick={() =>
+												void handleSendCounterproposal(
+													proposal.id,
+													proposal.loan_request_id,
+												)
+											}
+										>
+											{isSending && isCurrentAction ? (
+												<LoaderCircle className="animate-spin" />
+											) : (
+												<Send />
+											)}
+											Enviar
+										</Button>
+									) : null}
 								</>
 							)}
 						</div>

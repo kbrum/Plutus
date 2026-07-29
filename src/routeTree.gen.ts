@@ -16,6 +16,7 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedInstallmentsIndexRouteImport } from './routes/_authenticated/installments/index'
 import { Route as AuthenticatedLoansIndexRouteImport } from './routes/_authenticated/loans/index'
+import { Route as AuthenticatedLoansLoanIdRouteImport } from './routes/_authenticated/loans/$loanId'
 import { Route as AuthenticatedMembersIndexRouteImport } from './routes/_authenticated/members/index'
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
@@ -60,6 +61,12 @@ const AuthenticatedLoansIndexRoute = AuthenticatedLoansIndexRouteImport.update({
   path: '/loans/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedLoansLoanIdRoute =
+  AuthenticatedLoansLoanIdRouteImport.update({
+    id: '/loans/$loanId',
+    path: '/loans/$loanId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedMembersIndexRoute =
   AuthenticatedMembersIndexRouteImport.update({
     id: '/members/',
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/installments/': typeof AuthenticatedInstallmentsIndexRoute
   '/loans/': typeof AuthenticatedLoansIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/installments': typeof AuthenticatedInstallmentsIndexRoute
   '/loans': typeof AuthenticatedLoansIndexRoute
@@ -139,6 +148,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/_authenticated/loans/$loanId': typeof AuthenticatedLoansLoanIdRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/installments/': typeof AuthenticatedInstallmentsIndexRoute
   '/_authenticated/loans/': typeof AuthenticatedLoansIndexRoute
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth/login'
     | '/auth/register'
+    | '/loans/$loanId'
     | '/dashboard/'
     | '/installments/'
     | '/loans/'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth/login'
     | '/auth/register'
+    | '/loans/$loanId'
     | '/dashboard'
     | '/installments'
     | '/loans'
@@ -187,6 +199,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth/login'
     | '/auth/register'
+    | '/_authenticated/loans/$loanId'
     | '/_authenticated/dashboard/'
     | '/_authenticated/installments/'
     | '/_authenticated/loans/'
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLoansIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/loans/$loanId': {
+      id: '/_authenticated/loans/$loanId'
+      path: '/loans/$loanId'
+      fullPath: '/loans/$loanId'
+      preLoaderRoute: typeof AuthenticatedLoansLoanIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/members/': {
       id: '/_authenticated/members/'
       path: '/members'
@@ -310,6 +330,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedLoansLoanIdRoute: typeof AuthenticatedLoansLoanIdRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedInstallmentsIndexRoute: typeof AuthenticatedInstallmentsIndexRoute
   AuthenticatedLoansIndexRoute: typeof AuthenticatedLoansIndexRoute
@@ -323,6 +344,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedLoansLoanIdRoute: AuthenticatedLoansLoanIdRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedInstallmentsIndexRoute: AuthenticatedInstallmentsIndexRoute,
   AuthenticatedLoansIndexRoute: AuthenticatedLoansIndexRoute,

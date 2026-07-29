@@ -17,6 +17,20 @@ const loanSelect = `
 	lender:profiles!loans_lender_id_fkey(display_name)
 `;
 
+const loanDetailsSelect = `
+	${loanSelect},
+	installments(
+		id,
+		installment_number,
+		principal_amount,
+		interest_amount,
+		total_amount,
+		due_date,
+		status,
+		paid_at
+	)
+`;
+
 async function getCurrentUserId() {
 	const supabase = createSupabaseServerClient();
 	const { data: claims, error } = await supabase.auth.getClaims();
@@ -50,6 +64,31 @@ export async function getLoans() {
 				? ("lender" as const)
 				: ("borrower" as const),
 	}));
+}
+
+export async function getLoanById(loanId: string) {
+	const { supabase, currentUserId } = await getCurrentUserId();
+	const { data: loan, error } = await supabase
+		.from("loans")
+		.select(loanDetailsSelect)
+		.eq("id", loanId)
+		.maybeSingle();
+
+	if (error) {
+		throw error;
+	}
+
+	if (!loan) {
+		return null;
+	}
+
+	return {
+		...loan,
+		role:
+			loan.lender_id === currentUserId
+				? ("lender" as const)
+				: ("borrower" as const),
+	};
 }
 
 export async function getSentLoansHistory() {

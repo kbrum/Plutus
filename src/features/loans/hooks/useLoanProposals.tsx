@@ -94,8 +94,12 @@ export function useWithdrawLoanProposal() {
 	const mutation = useMutation({
 		mutationFn: (proposalId: string) =>
 			withdrawProposal({ data: { proposalId } }),
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: loanProposalsQueryKey }),
+		onSuccess: async () => {
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: loanProposalsQueryKey }),
+				queryClient.invalidateQueries({ queryKey: ["loan-requests"] }),
+			]);
+		},
 	});
 
 	return {
@@ -110,8 +114,12 @@ export function useRejectLoanProposal() {
 	const mutation = useMutation({
 		mutationFn: (proposalId: string) =>
 			rejectProposal({ data: { proposalId } }),
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: loanProposalsQueryKey }),
+		onSuccess: async () => {
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: loanProposalsQueryKey }),
+				queryClient.invalidateQueries({ queryKey: ["loan-requests"] }),
+			]);
+		},
 	});
 
 	return {
