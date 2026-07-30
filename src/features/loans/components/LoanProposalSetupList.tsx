@@ -73,7 +73,7 @@ export function LoanProposalSetupList({
 				{loadingItems.map((item) => (
 					<li
 						key={item}
-						className="h-52 animate-pulse rounded-2xl border border-slate-800 bg-[#0c141e]"
+						className="h-52 animate-pulse rounded-xl border border-slate-800 bg-card"
 					/>
 				))}
 			</ul>
@@ -120,7 +120,7 @@ export function LoanProposalSetupList({
 				return (
 					<li
 						key={request.id}
-						className="rounded-2xl border border-slate-800/90 bg-[#0c141e] p-4 transition-colors hover:border-violet-400/20"
+						className="rounded-xl border border-slate-800/90 bg-card p-4 transition-colors hover:border-violet-400/30"
 					>
 						<div className="flex items-start justify-between gap-4">
 							<div className="min-w-0">

@@ -37,7 +37,7 @@ export function ActiveLoansList() {
 				{loadingLoans.map((loan) => (
 					<li
 						key={loan}
-						className="h-48 animate-pulse rounded-2xl border border-slate-800 bg-[#0c141e]"
+						className="h-48 animate-pulse rounded-xl border border-slate-800 bg-card"
 					/>
 				))}
 			</ul>
@@ -76,7 +76,7 @@ export function ActiveLoansList() {
 					return (
 						<li
 							key={loan.id}
-							className="rounded-2xl border border-slate-800/90 bg-[#0c141e] p-5 transition-colors hover:border-emerald-400/20"
+							className="rounded-xl border border-slate-800/90 bg-card p-5 transition-colors hover:border-emerald-400/30"
 						>
 							<div className="flex items-start justify-between gap-3">
 								<div className="flex min-w-0 gap-3">
@@ -152,7 +152,7 @@ export function ActiveLoansList() {
 											</Link>
 										</Button>
 									</TooltipTrigger>
-									<TooltipContent className="border border-teal-300/15 bg-[#101d20] text-teal-100">
+									<TooltipContent className="border border-teal-300/15 bg-popover text-teal-100">
 										Visualizar detalhes do empréstimo
 									</TooltipContent>
 								</Tooltip>

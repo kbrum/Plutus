@@ -9,19 +9,42 @@ import {
 	UsersRound,
 } from "lucide-react";
 import { useGetUser } from "#/features/auth/hooks/useGetUser";
+import { ThemeToggle } from "#/features/theme/components/ThemeToggle";
 import { LogoutButton } from "./LogoutButton";
 
-const operations = [
-	{ label: "Meus empréstimos", icon: HandCoins, to: "/loans" },
-	{ label: "Parcelas", icon: CalendarDays, to: "/installments" },
-	{ label: "Pagamentos", icon: ReceiptText, to: "/payments" },
+const navItems = [
+	{
+		label: "Dashboard",
+		shortLabel: "Início",
+		icon: LayoutDashboard,
+		to: "/dashboard",
+	},
+	{ label: "Membros", shortLabel: "Pessoas", icon: UsersRound, to: "/members" },
+	{
+		label: "Meus empréstimos",
+		shortLabel: "Créditos",
+		icon: HandCoins,
+		to: "/loans",
+	},
+	{
+		label: "Parcelas",
+		shortLabel: "Parcelas",
+		icon: CalendarDays,
+		to: "/installments",
+	},
+	{
+		label: "Pagamentos",
+		shortLabel: "Pagamentos",
+		icon: ReceiptText,
+		to: "/payments",
+	},
 ] as const;
 
 export const itemClassName =
-	"group relative flex h-11 w-full items-center justify-center gap-3 rounded-xl px-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800/70 hover:text-slate-100 md:justify-start";
+	"group relative flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-500 transition-colors hover:bg-sidebar-accent/60 hover:text-slate-100";
 
 const activeItemClassName =
-	"group relative flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-amber-300/15 bg-amber-400/10 px-3 text-sm font-semibold text-amber-200 shadow-[inset_0_0_24px_rgba(251,191,36,0.025)] md:justify-start";
+	"group relative flex h-11 w-full items-center gap-3 rounded-lg bg-sidebar-accent/70 px-3 text-sm font-semibold text-amber-300 before:absolute before:top-3 before:bottom-3 before:left-0 before:w-0.5 before:rounded-full before:bg-amber-400";
 
 export function AppSidebar() {
 	const { name, email, isLoading, isError } = useGetUser();
@@ -34,111 +57,116 @@ export function AppSidebar() {
 		.toUpperCase();
 
 	return (
-		<aside className="sticky top-0 flex h-svh w-[4.75rem] shrink-0 flex-col border-r border-slate-800/90 bg-[#0a1119] px-3 py-4 md:w-72 md:px-5 md:py-6">
-			<div className="flex h-12 items-center justify-center md:justify-start md:px-2">
-				<div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-400/10 text-amber-300 shadow-[0_0_28px_rgba(251,191,36,0.06)]">
-					<Landmark className="size-5" />
+		<>
+			<header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar/95 px-5 backdrop-blur-md md:hidden">
+				<div className="flex items-center gap-2.5">
+					<span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+						<Landmark className="size-[1.05rem]" />
+					</span>
+					<span className="font-semibold tracking-tight text-slate-100">
+						Plutus
+					</span>
 				</div>
-				<div className="ml-3 hidden md:block">
-					<p className="font-semibold tracking-tight text-slate-100">Plutus</p>
-					<p className="text-[0.6rem] tracking-[0.18em] text-slate-500 uppercase">
-						Gestão de crédito
-					</p>
-				</div>
-			</div>
-
-			<div className="my-6 h-px bg-slate-800/80" />
-
-			<nav
-				aria-label="Navegação principal"
-				className="min-h-0 flex-1 space-y-6 overflow-y-auto"
-			>
-				<div>
-					<p className="mb-2 hidden px-3 text-[0.65rem] font-bold tracking-[0.16em] text-slate-600 uppercase md:block">
-						Visão geral
-					</p>
+				<div className="flex items-center gap-3">
+					<ThemeToggle />
 					<Link
-						to="/dashboard"
-						activeOptions={{ exact: true }}
-						className={itemClassName}
-						activeProps={{
-							className: activeItemClassName,
-						}}
-						title="Dashboard"
+						to="/profile"
+						aria-label={name ? `Perfil de ${name}` : "Meu perfil"}
+						className="flex size-11 items-center justify-center rounded-full border border-sidebar-border bg-card text-xs font-bold text-amber-300 focus-visible:ring-2 focus-visible:ring-ring"
 					>
-						<span className="absolute left-0 hidden h-5 w-0.5 rounded-full bg-amber-300 md:block" />
-						<LayoutDashboard className="size-[1.1rem] shrink-0" />
-						<span className="hidden md:block">Dashboard</span>
-					</Link>
-				</div>
-
-				<div>
-					<p className="mb-2 hidden px-3 text-[0.65rem] font-bold tracking-[0.16em] text-slate-600 uppercase md:block">
-						Operação
-					</p>
-					<div className="space-y-1">
-						<Link
-							to="/members"
-							activeOptions={{ exact: true }}
-							className={itemClassName}
-							activeProps={{ className: activeItemClassName }}
-							title="Membros"
-						>
-							<UsersRound className="size-[1.1rem] shrink-0 text-slate-500 transition-colors group-hover:text-teal-300" />
-							<span className="hidden md:block">Membros</span>
-						</Link>
-
-						{operations.map(({ label, icon: Icon, to }) => (
-							<Link
-								key={label}
-								to={to}
-								activeOptions={{ exact: true }}
-								className={itemClassName}
-								activeProps={{ className: activeItemClassName }}
-								title={label}
-							>
-								<Icon className="size-[1.1rem] shrink-0 text-slate-500 transition-colors group-hover:text-teal-300" />
-								<span className="hidden md:block">{label}</span>
-							</Link>
-						))}
-					</div>
-				</div>
-			</nav>
-
-			<div className="mt-4 border-t border-slate-800/80 pt-4">
-				<Link
-					to="/profile"
-					activeOptions={{ exact: true }}
-					className="group flex w-full items-center justify-center gap-3 rounded-xl px-2 py-2 text-sm transition-colors hover:bg-slate-800/70 md:justify-start"
-					activeProps={{
-						className:
-							"group flex w-full items-center justify-center gap-3 rounded-xl border border-amber-300/15 bg-amber-400/10 px-2 py-2 text-sm md:justify-start",
-					}}
-					title={name ? `Perfil de ${name}` : "Meu perfil"}
-					aria-busy={isLoading}
-				>
-					<span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-teal-300/15 bg-teal-400/8 text-xs font-bold text-teal-300">
 						{isLoading ? (
 							<LoaderCircle className="size-4 animate-spin" />
 						) : (
 							(initials ?? "?")
 						)}
-					</span>
-					<span className="hidden min-w-0 flex-1 text-left md:block">
-						<span className="block truncate font-medium text-slate-200">
-							{isLoading
-								? "Carregando perfil"
-								: isError
-									? "Perfil indisponível"
-									: (name ?? "Meu perfil")}
+					</Link>
+				</div>
+			</header>
+
+			<nav
+				className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5rem+env(safe-area-inset-bottom))] grid-cols-5 border-t border-sidebar-border bg-sidebar/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+				aria-label="Navegação principal"
+			>
+				{navItems.map(({ label, shortLabel, icon: Icon, to }) => (
+					<Link
+						key={to}
+						to={to}
+						activeOptions={{ exact: to !== "/loans" }}
+						className="relative flex min-w-0 flex-col items-center justify-center gap-1 text-[0.68rem] font-medium text-slate-500 transition-colors before:absolute before:top-0 before:h-0.5 before:w-7 before:scale-x-0 before:rounded-full before:bg-primary before:transition-transform"
+						activeProps={{ className: "text-amber-300 before:scale-x-100" }}
+						aria-label={label}
+					>
+						<Icon className="size-[1.15rem]" />
+						<span className="max-w-full truncate px-0.5">{shortLabel}</span>
+					</Link>
+				))}
+			</nav>
+
+			<aside className="sticky top-0 hidden h-svh w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-5 py-6 md:flex">
+				<div className="flex h-12 items-center gap-3 px-2">
+					<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+						<Landmark className="size-5" />
+					</div>
+					<div>
+						<p className="font-semibold tracking-tight text-slate-100">
+							Plutus
+						</p>
+						<p className="text-[0.65rem] text-slate-500">Gestão de crédito</p>
+					</div>
+					<div className="ml-auto">
+						<ThemeToggle />
+					</div>
+				</div>
+
+				<nav
+					aria-label="Navegação principal"
+					className="mt-8 min-h-0 flex-1 space-y-1 overflow-y-auto"
+				>
+					{navItems.map(({ label, icon: Icon, to }) => (
+						<Link
+							key={to}
+							to={to}
+							activeOptions={{ exact: to !== "/loans" }}
+							className={itemClassName}
+							activeProps={{ className: activeItemClassName }}
+						>
+							<Icon className="size-[1.1rem] shrink-0" />
+							<span>{label}</span>
+						</Link>
+					))}
+				</nav>
+
+				<div className="mt-4 border-t border-sidebar-border pt-4">
+					<Link
+						to="/profile"
+						activeOptions={{ exact: true }}
+						className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-sidebar-accent/60"
+						activeProps={{ className: "bg-sidebar-accent/70" }}
+						aria-busy={isLoading}
+					>
+						<span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-sidebar-border bg-card text-xs font-bold text-amber-300">
+							{isLoading ? (
+								<LoaderCircle className="size-4 animate-spin" />
+							) : (
+								(initials ?? "?")
+							)}
 						</span>
-						<span className="block truncate text-[0.65rem] font-normal text-slate-600">
-							{email ?? "Conta e preferências"}
+						<span className="min-w-0 flex-1 text-left">
+							<span className="block truncate font-medium text-slate-200">
+								{isLoading
+									? "Carregando perfil"
+									: isError
+										? "Perfil indisponível"
+										: (name ?? "Meu perfil")}
+							</span>
+							<span className="block truncate text-[0.68rem] text-slate-500">
+								{email ?? "Conta e preferências"}
+							</span>
 						</span>
-					</span>
-				</Link>
-				<LogoutButton />
-			</div>
-		</aside>
+					</Link>
+					<LogoutButton />
+				</div>
+			</aside>
+		</>
 	);
 }

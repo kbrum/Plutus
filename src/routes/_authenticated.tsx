@@ -23,9 +23,18 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
 	return (
-		<div className="flex min-h-svh bg-[#070c12] text-slate-100">
+		<div className="flex min-h-svh bg-background text-foreground">
+			<a
+				href="#main-content"
+				className="fixed top-3 left-3 z-50 -translate-y-20 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-transform focus:translate-y-0"
+			>
+				Ir para o conteúdo
+			</a>
 			<AppSidebar />
-			<main className="min-w-0 flex-1 overflow-x-hidden">
+			<main
+				id="main-content"
+				className="min-w-0 flex-1 overflow-x-hidden pt-16 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pt-0 md:pb-0"
+			>
 				<Outlet />
 			</main>
 		</div>

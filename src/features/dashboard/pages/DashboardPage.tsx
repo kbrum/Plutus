@@ -57,7 +57,7 @@ export function DashboardPage() {
 	}
 
 	return (
-		<section className="mx-auto w-full max-w-[100rem] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
+		<section className="mx-auto w-full max-w-[90rem] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
 			<header className="border-b border-slate-800/80 pb-7">
 				<div>
 					<p className="text-xs font-bold tracking-[0.18em] text-teal-300/80 uppercase">
@@ -85,7 +85,7 @@ export function DashboardPage() {
 					label="Saldo a pagar"
 					value={dashboard.summary.payableOutstanding}
 					description="Parcelas que você precisa pagar"
-					accentClassName="border-amber-300/15 bg-amber-400/8 text-amber-300"
+					accentClassName="border-cyan-300/15 bg-cyan-400/8 text-cyan-300"
 				/>
 				<MetricCard
 					icon={Landmark}
@@ -143,13 +143,13 @@ function MetricCard({
 	accentClassName: string;
 }) {
 	return (
-		<div className="rounded-2xl border border-slate-800/90 bg-[#0b141d] p-5">
+		<div className="rounded-xl border border-slate-800/90 bg-card p-5">
 			<div className="flex items-start justify-between gap-4">
 				<div>
 					<p className="text-xs font-semibold tracking-[0.08em] text-slate-500 uppercase">
 						{label}
 					</p>
-					<p className="mt-3 text-2xl font-bold tracking-[-0.025em] text-slate-100">
+					<p className="mt-3 text-2xl font-bold tracking-[-0.025em] text-slate-100 tabular-nums">
 						{currencyFormatter.format(value)}
 					</p>
 				</div>
@@ -172,7 +172,7 @@ function CashFlowChart({ cashFlow }: { cashFlow: DashboardData["cashFlow"] }) {
 	const hasScheduledFlow = maximumValue > 0;
 
 	return (
-		<div className="rounded-2xl border border-slate-800/90 bg-[#0b141d] p-5 sm:p-6">
+		<div className="rounded-xl border border-slate-800/90 bg-card p-5 sm:p-6">
 			<div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
 				<div>
 					<div className="flex items-center gap-2 text-slate-200">
@@ -188,7 +188,7 @@ function CashFlowChart({ cashFlow }: { cashFlow: DashboardData["cashFlow"] }) {
 						<i className="size-2 rounded-full bg-teal-400" /> A receber
 					</span>
 					<span className="flex items-center gap-1.5">
-						<i className="size-2 rounded-full bg-amber-400" /> A pagar
+						<i className="size-2 rounded-full bg-cyan-400" /> A pagar
 					</span>
 				</div>
 			</div>
@@ -213,7 +213,7 @@ function CashFlowChart({ cashFlow }: { cashFlow: DashboardData["cashFlow"] }) {
 								label="Pagar"
 								value={month.payable}
 								maximumValue={maximumValue}
-								barClassName="bg-amber-400"
+								barClassName="bg-cyan-400"
 							/>
 						</div>
 					))}
@@ -294,7 +294,7 @@ function AttentionPanel({
 	] as const;
 
 	return (
-		<div className="rounded-2xl border border-slate-800/90 bg-[#0b141d] p-5 sm:p-6">
+		<div className="rounded-xl border border-slate-800/90 bg-card p-5 sm:p-6">
 			<h2 className="font-semibold text-slate-200">Precisa da sua atenção</h2>
 			<p className="mt-2 text-xs leading-5 text-slate-500">
 				Resumo do que pode exigir uma decisão agora.
@@ -343,7 +343,7 @@ function InstallmentPanel({
 	overdue?: boolean;
 }) {
 	return (
-		<div className="overflow-hidden rounded-2xl border border-slate-800/90 bg-[#0b141d]">
+		<div className="overflow-hidden rounded-xl border border-slate-800/90 bg-card">
 			<div className="flex items-start gap-3 border-b border-slate-800/80 px-5 py-5 sm:px-6">
 				<span
 					className={`flex size-9 shrink-0 items-center justify-center rounded-lg border ${overdue ? "border-rose-300/15 bg-rose-400/8 text-rose-300" : "border-cyan-300/15 bg-cyan-400/8 text-cyan-300"}`}
@@ -365,7 +365,7 @@ function InstallmentPanel({
 								className="flex items-center gap-3 px-5 py-4 transition-colors hover:bg-slate-900/45 sm:px-6"
 							>
 								<span
-									className={`flex size-9 shrink-0 items-center justify-center rounded-lg border ${installment.direction === "receivable" ? "border-teal-300/15 bg-teal-400/8 text-teal-300" : "border-amber-300/15 bg-amber-400/8 text-amber-300"}`}
+									className={`flex size-9 shrink-0 items-center justify-center rounded-lg border ${installment.direction === "receivable" ? "border-teal-300/15 bg-teal-400/8 text-teal-300" : "border-cyan-300/15 bg-cyan-400/8 text-cyan-300"}`}
 								>
 									{installment.direction === "receivable" ? (
 										<ArrowDownLeft className="size-4" />
@@ -412,7 +412,7 @@ function InstallmentPanel({
 
 function DashboardSkeleton() {
 	return (
-		<div className="mx-auto w-full max-w-[100rem] animate-pulse px-5 py-8 sm:px-8 lg:px-10">
+		<div className="mx-auto w-full max-w-[90rem] animate-pulse px-5 py-8 sm:px-8 lg:px-10">
 			<div className="h-10 w-64 rounded-lg bg-slate-900" />
 			<div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 				{["metric-1", "metric-2", "metric-3", "metric-4"].map((item) => (

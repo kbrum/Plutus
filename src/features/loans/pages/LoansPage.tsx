@@ -45,7 +45,7 @@ function BoardColumn({
 	children,
 }: BoardColumnProps) {
 	return (
-		<section className="flex min-h-[28rem] min-w-0 flex-col rounded-2xl border border-slate-800/90 bg-[#0b141d]">
+		<section className="flex min-h-[28rem] min-w-0 flex-col rounded-xl border border-slate-800/90 bg-card">
 			<header className="flex items-start gap-3 border-b border-slate-800/80 px-5 py-5">
 				<span
 					className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${accentClassName}`}
@@ -197,7 +197,7 @@ export function LoansPage() {
 	}, [currentUserId]);
 
 	return (
-		<section className="mx-auto w-full max-w-[100rem] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
+		<section className="mx-auto w-full max-w-[90rem] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
 			<header className="flex flex-col justify-between gap-6 border-b border-slate-800/80 pb-7 lg:flex-row lg:items-end">
 				<div>
 					<p className="text-xs font-bold tracking-[0.18em] text-teal-300/80 uppercase">

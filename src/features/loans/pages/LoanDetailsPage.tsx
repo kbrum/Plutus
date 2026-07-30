@@ -41,7 +41,7 @@ const loanStatusConfig = {
 } as const;
 
 const installmentStatusConfig = {
-	pending: { label: "Pendente", className: "text-amber-300" },
+	pending: { label: "Pendente", className: "text-cyan-300" },
 	paid: { label: "Paga", className: "text-emerald-300" },
 	overdue: { label: "Em atraso", className: "text-rose-300" },
 	cancelled: { label: "Cancelada", className: "text-slate-500" },
@@ -168,7 +168,7 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 			</div>
 
 			<div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-				<div className="rounded-2xl border border-slate-800 bg-[#0b141d] p-5 sm:p-6">
+				<div className="rounded-xl border border-slate-800 bg-card p-5 sm:p-6">
 					<div className="flex items-end justify-between gap-4">
 						<div>
 							<p className="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">
@@ -184,7 +184,7 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 					</div>
 					<div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-800">
 						<div
-							className="h-full rounded-full bg-gradient-to-r from-teal-500 to-emerald-400 transition-[width]"
+							className="h-full rounded-full bg-primary transition-[width]"
 							style={{ width: `${progress}%` }}
 						/>
 					</div>
@@ -194,7 +194,7 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 					</p>
 				</div>
 
-				<div className="rounded-2xl border border-slate-800 bg-[#0b141d] p-5 sm:p-6">
+				<div className="rounded-xl border border-slate-800 bg-card p-5 sm:p-6">
 					<div className="flex items-center gap-2 text-slate-400">
 						<Clock3 className="size-4 text-amber-300" />
 						<span className="text-xs font-bold tracking-[0.14em] uppercase">
@@ -226,7 +226,7 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 				</div>
 			</div>
 
-			<div className="mt-6 overflow-hidden rounded-2xl border border-slate-800 bg-[#0b141d]">
+			<div className="mt-6 overflow-hidden rounded-xl border border-slate-800 bg-card">
 				<div className="border-b border-slate-800 px-5 py-4 sm:px-6">
 					<h2 className="font-semibold text-slate-100">
 						Cronograma de parcelas
@@ -287,7 +287,7 @@ function MetricCard({
 	value: string;
 }) {
 	return (
-		<div className="rounded-2xl border border-slate-800 bg-[#0b141d] p-5">
+		<div className="rounded-xl border border-slate-800 bg-card p-5">
 			<div className="flex items-center gap-2 text-xs font-bold tracking-[0.12em] text-slate-500 uppercase">
 				<Icon className="size-4 text-teal-300" />
 				{label}

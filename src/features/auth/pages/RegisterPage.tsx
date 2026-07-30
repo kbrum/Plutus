@@ -2,18 +2,19 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Landmark, ShieldCheck, UsersRound } from "lucide-react";
 
 import { Button } from "#/components/ui/button";
+import { ThemeToggle } from "#/features/theme/components/ThemeToggle";
 import { RegisterForm } from "../components/RegisterForm";
 
 export function RegisterPage() {
 	return (
-		<main className="relative min-h-svh overflow-hidden bg-[#070c12] px-4 py-4 text-slate-100 sm:px-6 sm:py-6 lg:flex lg:items-center lg:px-10 lg:py-10">
-			<div className="absolute -top-36 -left-28 size-96 rounded-full bg-teal-500/10 blur-3xl" />
-			<div className="absolute -right-32 -bottom-48 size-128 rounded-full bg-amber-500/8 blur-3xl" />
-
-			<section className="relative mx-auto grid min-h-[calc(100svh-2rem)] w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-slate-700/60 bg-[#0a1018] shadow-[0_40px_100px_rgba(0,0,0,0.45)] sm:min-h-[calc(100svh-3rem)] lg:min-h-[720px] lg:grid-cols-[0.9fr_1.1fr]">
-				<div className="relative hidden overflow-hidden border-r border-slate-700/50 bg-[#101923] p-14 lg:flex lg:flex-col lg:justify-between xl:p-18">
+		<main className="relative min-h-svh bg-background px-4 py-4 text-foreground sm:px-6 sm:py-6 lg:flex lg:items-center lg:px-10 lg:py-10">
+			<div className="fixed top-5 right-5 z-20 rounded-full border border-border bg-card/90 px-3 py-2 shadow-sm backdrop-blur-md">
+				<ThemeToggle />
+			</div>
+			<section className="mx-auto grid min-h-[calc(100svh-2rem)] w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-800 bg-card shadow-[var(--shadow-raised)] sm:min-h-[calc(100svh-3rem)] lg:min-h-[720px] lg:grid-cols-[0.9fr_1.1fr]">
+				<div className="relative hidden overflow-hidden border-r border-slate-800 bg-secondary p-14 lg:flex lg:flex-col lg:justify-between xl:p-18">
 					<div className="flex items-center gap-3">
-						<div className="flex size-10 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-400/10 text-amber-300">
+						<div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
 							<Landmark className="size-5" />
 						</div>
 						<div>
@@ -48,10 +49,10 @@ export function RegisterPage() {
 					</p>
 				</div>
 
-				<div className="flex items-center bg-[#0a1018] px-5 py-9 sm:px-10 lg:px-12 xl:px-16">
+				<div className="flex items-center bg-card px-5 py-9 sm:px-10 lg:px-12 xl:px-16">
 					<div className="mx-auto w-full max-w-lg">
 						<div className="mb-7 flex items-center gap-3 lg:hidden">
-							<div className="flex size-10 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-400/10 text-amber-300">
+							<div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
 								<Landmark className="size-5" />
 							</div>
 							<p className="font-semibold">Plutus</p>

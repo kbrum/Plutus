@@ -53,7 +53,7 @@ export function LoanProposalTimelineDialog({
 				Linha do tempo
 			</Button>
 
-			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] text-slate-100 sm:max-w-xl">
+			<DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover text-slate-100 sm:max-w-xl">
 				<DialogHeader>
 					<DialogTitle>Linha do tempo da negociação</DialogTitle>
 					<DialogDescription className="text-slate-500">
@@ -78,7 +78,7 @@ export function LoanProposalTimelineDialog({
 					<ol className="relative space-y-4 before:absolute before:top-3 before:bottom-3 before:left-[0.42rem] before:w-px before:bg-slate-800">
 						{loanProposalTimeline.map((proposal) => (
 							<li key={proposal.id} className="relative pl-7">
-								<span className="absolute top-2 left-0 size-3.5 rounded-full border-2 border-[#0b141d] bg-teal-400" />
+								<span className="absolute top-2 left-0 size-3.5 rounded-full border-2 border-popover bg-teal-400" />
 								<div className="rounded-xl border border-slate-800 bg-slate-950/35 p-4">
 									<div className="flex flex-wrap items-start justify-between gap-3">
 										<div>

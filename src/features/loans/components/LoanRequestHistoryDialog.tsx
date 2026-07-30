@@ -28,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
 const statusConfig = {
 	pending: {
 		label: "Pendente",
-		className: "border-amber-300/15 bg-amber-400/8 text-amber-300",
+		className: "border-cyan-300/15 bg-cyan-400/8 text-cyan-300",
 	},
 	accepted: {
 		label: "Aceita",
@@ -76,7 +76,7 @@ export function LoanRequestHistoryDialog({
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] text-slate-100 sm:max-w-2xl">
+			<DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover text-slate-100 sm:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>Histórico de solicitações {directionLabel}</DialogTitle>
 					<DialogDescription className="leading-6 text-slate-500">

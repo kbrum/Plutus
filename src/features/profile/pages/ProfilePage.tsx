@@ -1,5 +1,6 @@
 import { Mail, UserRound } from "lucide-react";
 import { useGetUser } from "#/features/auth/hooks/useGetUser";
+import { LogoutButton } from "#/features/navigation/components/LogoutButton";
 import { ProfileNameForm } from "../components/ProfileNameForm";
 
 export function ProfilePage() {
@@ -25,7 +26,7 @@ export function ProfilePage() {
 			</p>
 
 			{isLoading ? (
-				<div className="mt-8 animate-pulse rounded-3xl border border-slate-800 bg-[#0c141e] p-6 sm:p-8">
+				<div className="mt-8 animate-pulse rounded-xl border border-slate-800 bg-card p-6 sm:p-8">
 					<div className="size-16 rounded-2xl bg-slate-800" />
 					<div className="mt-5 h-4 w-40 rounded bg-slate-800" />
 					<div className="mt-3 h-3 w-56 rounded bg-slate-800/70" />
@@ -36,7 +37,7 @@ export function ProfilePage() {
 					Não foi possível carregar o perfil.
 				</div>
 			) : (
-				<div className="mt-8 rounded-3xl border border-slate-800 bg-[#0c141e] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.18)] sm:p-8">
+				<div className="mt-8 rounded-xl border border-slate-800 bg-card p-6 shadow-[var(--shadow-raised)] sm:p-8">
 					<div className="flex items-center gap-4 border-b border-slate-800 pb-6">
 						<div className="flex size-16 shrink-0 items-center justify-center rounded-2xl border border-teal-300/15 bg-teal-400/8 text-lg font-bold text-teal-300">
 							{initials || <UserRound className="size-6" />}
@@ -55,6 +56,9 @@ export function ProfilePage() {
 					<ProfileNameForm initialName={name} />
 				</div>
 			)}
+			<div className="mt-6 md:hidden">
+				<LogoutButton showLabel />
+			</div>
 		</section>
 	);
 }
