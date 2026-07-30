@@ -516,8 +516,69 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_payment_proof_upload: {
+        Args: {
+          p_installment_id: string
+          p_mime_type: string
+          p_original_filename: string
+          p_size_bytes: number
+        }
+        Returns: {
+          attached_at: string | null
+          created_at: string
+          etag: string | null
+          expires_at: string
+          id: string
+          installment_id: string
+          mime_type: string
+          object_key: string
+          original_filename: string
+          payment_id: string | null
+          size_bytes: number
+          status: Database["public"]["Enums"]["payment_proof_status"]
+          updated_at: string
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_proofs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mark_payment_proof_uploaded: {
+        Args: { p_etag: string; p_proof_id: string }
+        Returns: {
+          attached_at: string | null
+          created_at: string
+          etag: string | null
+          expires_at: string
+          id: string
+          installment_id: string
+          mime_type: string
+          object_key: string
+          original_filename: string
+          payment_id: string | null
+          size_bytes: number
+          status: Database["public"]["Enums"]["payment_proof_status"]
+          updated_at: string
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_proofs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       record_installment_payment: {
-        Args: { p_installment_id: string; p_paid_at: string }
+        Args: {
+          p_installment_id: string
+          p_paid_at: string
+          p_proof_id?: string
+        }
         Returns: {
           amount: number
           confirmed_at: string | null
@@ -601,7 +662,11 @@ export type Database = {
         }
       }
       report_installment_payment: {
-        Args: { p_installment_id: string; p_paid_at: string }
+        Args: {
+          p_installment_id: string
+          p_paid_at: string
+          p_proof_id?: string
+        }
         Returns: {
           amount: number
           confirmed_at: string | null

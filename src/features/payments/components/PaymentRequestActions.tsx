@@ -21,6 +21,7 @@ import {
 	useRejectInstallmentPayment,
 } from "../hooks/usePayments";
 import type { PaymentListItem } from "../payments.types";
+import { PaymentProofViewer } from "./PaymentProofViewer";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 	style: "currency",
@@ -35,7 +36,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
 type PaymentRequestActionsProps = {
 	payment: Pick<
 		PaymentListItem,
-		"id" | "installmentNumber" | "amount" | "paidAt"
+		"id" | "installmentNumber" | "amount" | "paidAt" | "proofId"
 	>;
 };
 
@@ -80,7 +81,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 								size="icon"
 								aria-label="Aceitar solicitação de pagamento"
 								disabled={isLoading}
-								className="size-9 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-emerald-400/30 hover:!bg-emerald-400/10 hover:!text-emerald-300"
+								className="rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:border-emerald-400/30! hover:bg-emerald-400/10! hover:text-emerald-300!"
 								onClick={() => setConfirmationOpen(true)}
 							>
 								{isConfirming ? (
@@ -90,7 +91,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 								)}
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent className="border border-emerald-300/15 bg-[#111d1b] text-emerald-100">
+						<TooltipContent className="border border-emerald-300/15 bg-popover text-emerald-100">
 							Aceitar solicitação
 						</TooltipContent>
 					</Tooltip>
@@ -102,7 +103,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 								size="icon"
 								aria-label="Rejeitar solicitação de pagamento"
 								disabled={isLoading}
-								className="size-9 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300"
+								className="rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300"
 								onClick={() => void reject()}
 							>
 								{isRejecting ? (
@@ -112,7 +113,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 								)}
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent className="border border-rose-300/15 bg-[#211214] text-rose-100">
+						<TooltipContent className="border border-rose-300/15 bg-popover text-rose-100">
 							Rejeitar solicitação
 						</TooltipContent>
 					</Tooltip>
@@ -125,7 +126,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 			>
 				<DialogContent
 					showCloseButton={!isLoading}
-					className="border-slate-800 bg-[#0b141d] text-slate-100"
+					className="border-slate-800 bg-popover text-slate-100"
 				>
 					<DialogHeader>
 						<div className="mb-2 flex size-11 items-center justify-center rounded-xl border border-rose-300/20 bg-rose-400/10 text-rose-300">
@@ -146,6 +147,11 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 							Pago em {dateTimeFormatter.format(new Date(payment.paidAt))}
 						</p>
 					</div>
+					{payment.proofId ? (
+						<div className="rounded-lg border border-slate-800 bg-card px-4 py-2">
+							<PaymentProofViewer paymentId={payment.id} />
+						</div>
+					) : null}
 					<DialogFooter>
 						<Button
 							type="button"
@@ -159,7 +165,7 @@ export function PaymentRequestActions({ payment }: PaymentRequestActionsProps) {
 						<Button
 							type="button"
 							disabled={isLoading}
-							className="bg-rose-500 font-bold text-white hover:bg-rose-400"
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={() => void confirm()}
 						>
 							{isConfirming ? <LoaderCircle className="animate-spin" /> : null}

@@ -66,11 +66,17 @@ function getCurrentTime() {
 	return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 }
 
-function getErrorDescription(error: unknown) {
-	if (error && typeof error === "object" && "message" in error) {
-		return String(error.message);
-	}
-	return "Não foi possível registrar o pagamento.";
+function formatTimeInput(value: string) {
+	const digits = value.replace(/\D/g, "").slice(0, 4);
+	return digits.length > 2
+		? `${digits.slice(0, 2)}:${digits.slice(2)}`
+		: digits;
+}
+
+function isValidTime(value: string) {
+	const match = /^(\d{2}):(\d{2})$/.exec(value);
+	if (!match) return false;
+	return Number(match[1]) <= 23 && Number(match[2]) <= 59;
 }
 
 type PaymentFormDialogProps = {
@@ -85,25 +91,41 @@ export function PaymentFormDialog({
 	const [open, setOpen] = useState(false);
 	const [confirmationStep, setConfirmationStep] = useState(false);
 	const [installmentId, setInstallmentId] = useState("");
+	const [installmentError, setInstallmentError] = useState("");
 	const [paidOn, setPaidOn] = useState(getToday);
+	const [paidAtError, setPaidAtError] = useState("");
 	const [paidTime, setPaidTime] = useState(getCurrentTime);
+	const [paidTimeError, setPaidTimeError] = useState("");
 	const [proofFile, setProofFile] = useState<File | null>(null);
 	const [proofDraft, setProofDraft] = useState<File | null>(null);
 	const [proofStep, setProofStep] = useState(false);
-	const { submitPayment: recordPayment, isLoading: isRecording } =
-		useRecordInstallmentPayment();
-	const { submitPayment: reportPayment, isLoading: isReporting } =
-		useReportInstallmentPayment();
+	const {
+		submitPayment: recordPayment,
+		isLoading: isRecording,
+		uploadStage: recordUploadStage,
+		uploadProgress: recordUploadProgress,
+	} = useRecordInstallmentPayment();
+	const {
+		submitPayment: reportPayment,
+		isLoading: isReporting,
+		uploadStage: reportUploadStage,
+		uploadProgress: reportUploadProgress,
+	} = useReportInstallmentPayment();
 	const isLender = role === "lender";
 	const isLoading = isRecording || isReporting;
+	const uploadStage = isLender ? recordUploadStage : reportUploadStage;
+	const uploadProgress = isLender ? recordUploadProgress : reportUploadProgress;
 	const selectedInstallment = installments.find(
 		(installment) => installment.id === installmentId,
 	);
 
 	function reset() {
 		setInstallmentId("");
+		setInstallmentError("");
 		setPaidOn(getToday());
+		setPaidAtError("");
 		setPaidTime(getCurrentTime());
+		setPaidTimeError("");
 		setProofFile(null);
 		setProofDraft(null);
 		setProofStep(false);
@@ -111,7 +133,23 @@ export function PaymentFormDialog({
 	}
 
 	async function submit() {
+		if (!isValidTime(paidTime)) {
+			setPaidTimeError("Informe um horário válido entre 00:00 e 23:59.");
+			return;
+		}
+
 		const localPaidAt = new Date(`${paidOn}T${paidTime}`);
+		if (localPaidAt > new Date()) {
+			setPaidAtError(
+				"A data e o horário do pagamento não podem estar no futuro.",
+			);
+			requestAnimationFrame(() =>
+				document.getElementById(`${role}-paid-on`)?.focus(),
+			);
+			return;
+		}
+		setPaidTimeError("");
+		setPaidAtError("");
 		const result = paymentFormSchema.safeParse({
 			installmentId,
 			paidAt: Number.isNaN(localPaidAt.getTime())
@@ -119,11 +157,21 @@ export function PaymentFormDialog({
 				: localPaidAt.toISOString(),
 		});
 		if (!result.success) {
-			toast.error("Confira os dados", {
-				description: result.error.issues[0]?.message,
-			});
+			const issue = result.error.issues[0];
+			if (issue?.path[0] === "installmentId") {
+				setInstallmentError(issue.message);
+				requestAnimationFrame(() =>
+					document.getElementById(`${role}-installment`)?.focus(),
+				);
+			} else {
+				setPaidAtError(issue?.message ?? "Informe a data do pagamento.");
+				requestAnimationFrame(() =>
+					document.getElementById(`${role}-paid-on`)?.focus(),
+				);
+			}
 			return;
 		}
+		setInstallmentError("");
 
 		if (isLender && !confirmationStep) {
 			setConfirmationStep(true);
@@ -132,8 +180,8 @@ export function PaymentFormDialog({
 
 		try {
 			await (isLender
-				? recordPayment(result.data)
-				: reportPayment(result.data));
+				? recordPayment(result.data, proofFile)
+				: reportPayment(result.data, proofFile));
 			toast.success(isLender ? "Pagamento confirmado" : "Solicitação enviada", {
 				description: isLender
 					? "A parcela foi marcada como paga para os dois participantes."
@@ -141,11 +189,18 @@ export function PaymentFormDialog({
 			});
 			setOpen(false);
 			reset();
-		} catch (error) {
-			toast.error("Não foi possível concluir", {
-				description: getErrorDescription(error),
-			});
+		} catch {
+			toast.error("Erro ao enviar");
 		}
+	}
+
+	function getSubmitLabel() {
+		if (uploadStage === "uploading") {
+			return `Enviando comprovante ${uploadProgress?.percentage ?? 0}%`;
+		}
+		if (uploadStage === "requesting-url") return "Preparando envio";
+		if (uploadStage === "confirming") return "Verificando comprovante";
+		return isLender ? "Confirmar pagamento" : "Enviar para confirmação";
 	}
 
 	return (
@@ -171,8 +226,14 @@ export function PaymentFormDialog({
 
 			<DialogContent
 				showCloseButton={!isLoading}
-				className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] text-slate-100 sm:max-w-lg"
+				aria-busy={isLoading}
+				className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover text-slate-100 sm:max-w-lg"
 			>
+				{isLoading ? (
+					<output className="sr-only" aria-live="polite">
+						{getSubmitLabel()}
+					</output>
+				) : null}
 				{proofStep && proofDraft ? (
 					<PaymentProofPreview
 						file={proofDraft}
@@ -193,7 +254,9 @@ export function PaymentFormDialog({
 							<div className="mb-2 flex size-11 items-center justify-center rounded-xl border border-rose-300/20 bg-rose-400/10 text-rose-300">
 								<AlertTriangle className="size-5" />
 							</div>
-							<DialogTitle>Confirmar pagamento?</DialogTitle>
+							<DialogTitle tabIndex={-1} autoFocus>
+								Confirmar pagamento?
+							</DialogTitle>
 							<DialogDescription className="leading-6 text-slate-400">
 								A parcela {selectedInstallment?.installmentNumber} será marcada
 								como paga para você e para o devedor. Esta operação é permanente
@@ -230,11 +293,11 @@ export function PaymentFormDialog({
 							<Button
 								type="button"
 								disabled={isLoading}
-								className="bg-rose-500 font-bold text-white hover:bg-rose-400"
+								className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 								onClick={() => void submit()}
 							>
 								{isLoading ? <LoaderCircle className="animate-spin" /> : null}
-								Confirmar pagamento
+								{getSubmitLabel()}
 							</Button>
 						</DialogFooter>
 					</>
@@ -254,9 +317,19 @@ export function PaymentFormDialog({
 						<div className="space-y-5 py-2">
 							<div className="space-y-2">
 								<Label htmlFor={`${role}-installment`}>Parcela</Label>
-								<Select value={installmentId} onValueChange={setInstallmentId}>
+								<Select
+									value={installmentId}
+									onValueChange={(value) => {
+										setInstallmentId(value);
+										setInstallmentError("");
+									}}
+								>
 									<SelectTrigger
 										id={`${role}-installment`}
+										aria-invalid={Boolean(installmentError)}
+										aria-describedby={
+											installmentError ? `${role}-installment-error` : undefined
+										}
 										className="h-11 w-full border-slate-700 bg-slate-950/50"
 									>
 										<SelectValue placeholder="Selecione uma parcela" />
@@ -267,7 +340,7 @@ export function PaymentFormDialog({
 										align="start"
 										sideOffset={4}
 										avoidCollisions={false}
-										className="border-slate-700 bg-[#0b141d] text-slate-200"
+										className="border-slate-700 bg-popover text-slate-200"
 									>
 										{installments.map((installment) => (
 											<SelectItem key={installment.id} value={installment.id}>
@@ -282,6 +355,15 @@ export function PaymentFormDialog({
 										))}
 									</SelectContent>
 								</Select>
+								{installmentError ? (
+									<p
+										id={`${role}-installment-error`}
+										className="text-sm text-rose-300"
+										role="alert"
+									>
+										{installmentError}
+									</p>
+								) : null}
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor={`${role}-paid-on`}>Data do pagamento</Label>
@@ -292,26 +374,77 @@ export function PaymentFormDialog({
 										type="date"
 										value={paidOn}
 										max={getToday()}
+										aria-invalid={Boolean(paidAtError)}
+										aria-describedby={
+											paidAtError ? `${role}-paid-at-error` : undefined
+										}
 										className="h-11 border-slate-700 bg-slate-950/50 pl-10"
-										onChange={(event) => setPaidOn(event.target.value)}
+										onChange={(event) => {
+											setPaidOn(event.target.value);
+											setPaidAtError("");
+										}}
 									/>
 								</div>
+								{paidAtError ? (
+									<p
+										id={`${role}-paid-at-error`}
+										className="text-sm text-rose-300"
+										role="alert"
+									>
+										{paidAtError}
+									</p>
+								) : null}
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor={`${role}-paid-time`}>
 									Horário do pagamento
 								</Label>
-								<div className="relative">
-									<Clock3 className="pointer-events-none absolute top-3 left-3 size-4 text-slate-500" />
-									<Input
-										id={`${role}-paid-time`}
-										type="time"
-										value={paidTime}
-										max={paidOn === getToday() ? getCurrentTime() : undefined}
-										className="h-11 border-slate-700 bg-slate-950/50 pl-10"
-										onChange={(event) => setPaidTime(event.target.value)}
-									/>
+								<div className="flex gap-2">
+									<div className="relative min-w-0 flex-1">
+										<Clock3 className="pointer-events-none absolute top-3 left-3 size-4 text-slate-500" />
+										<Input
+											id={`${role}-paid-time`}
+											name="payment-time"
+											type="text"
+											inputMode="numeric"
+											autoComplete="off"
+											placeholder="HH:mm"
+											maxLength={5}
+											value={paidTime}
+											aria-invalid={Boolean(paidTimeError)}
+											aria-describedby={
+												paidTimeError ? `${role}-paid-time-error` : undefined
+											}
+											className="h-11 border-slate-700 bg-slate-950/50 pl-10 text-base tabular-nums sm:text-sm"
+											onChange={(event) => {
+												setPaidTime(formatTimeInput(event.target.value));
+												setPaidTimeError("");
+											}}
+										/>
+									</div>
+									<Button
+										type="button"
+										variant="outline"
+										className="h-11 shrink-0 border-slate-700 bg-slate-950/50 px-4 text-slate-300 hover:bg-slate-800 hover:text-slate-100"
+										onClick={() => {
+											setPaidOn(getToday());
+											setPaidTime(getCurrentTime());
+											setPaidTimeError("");
+											setPaidAtError("");
+										}}
+									>
+										Agora
+									</Button>
 								</div>
+								{paidTimeError ? (
+									<p
+										id={`${role}-paid-time-error`}
+										className="text-sm text-rose-300"
+										role="alert"
+									>
+										{paidTimeError}
+									</p>
+								) : null}
 							</div>
 							<div className="space-y-2">
 								<div>
@@ -339,7 +472,7 @@ export function PaymentFormDialog({
 								onClick={() => void submit()}
 							>
 								{isLoading ? <LoaderCircle className="animate-spin" /> : null}
-								{isLender ? "Confirmar pagamento" : "Enviar para confirmação"}
+								{getSubmitLabel()}
 							</Button>
 						</DialogFooter>
 					</>

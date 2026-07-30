@@ -25,7 +25,7 @@ const installmentSelect = `
 	due_date,
 	status,
 	paid_at,
-	payments(id, amount, paid_at, status),
+	payments(id, amount, paid_at, status, payment_proofs(id)),
 	loan:loans!inner(
 		id,
 		borrower_id,
@@ -44,6 +44,7 @@ const paymentSelect = `
 	status,
 	created_at,
 	confirmed_at,
+	payment_proofs(id),
 	reporter:profiles!payments_reported_by_fkey(display_name),
 	installment:installments!inner(
 		installment_number,
@@ -58,7 +59,7 @@ const paymentSelect = `
 	)
 `;
 
-async function getAuthenticatedClient() {
+export async function getAuthenticatedClient() {
 	const supabase = createSupabaseServerClient();
 	const { data: claims, error } = await supabase.auth.getClaims();
 	const currentUserId = claims?.claims.sub;
@@ -114,6 +115,7 @@ export async function getPaymentInstallments(): Promise<PaymentInstallment[]> {
 							installmentNumber: installment.installment_number,
 							amount: pendingPayment.amount,
 							paidAt: pendingPayment.paid_at,
+							proofId: pendingPayment.payment_proofs?.id ?? null,
 						}
 					: null,
 			};
@@ -145,6 +147,7 @@ export async function getPayments(): Promise<PaymentListItem[]> {
 			paidAt: payment.paid_at,
 			createdAt: payment.created_at,
 			confirmedAt: payment.confirmed_at,
+			proofId: payment.payment_proofs?.id ?? null,
 			status: payment.status,
 			role: isLender ? "lender" : "borrower",
 			counterpartName: isLender
@@ -157,12 +160,13 @@ export async function getPayments(): Promise<PaymentListItem[]> {
 
 export async function reportInstallmentPayment(data: PaymentFormSchema) {
 	const { supabase } = await getAuthenticatedClient();
+	const params = {
+		p_installment_id: data.installmentId,
+		p_paid_at: data.paidAt,
+	};
 	const { data: payment, error } = await supabase.rpc(
 		"report_installment_payment",
-		{
-			p_installment_id: data.installmentId,
-			p_paid_at: data.paidAt,
-		},
+		data.proofId ? { ...params, p_proof_id: data.proofId } : params,
 	);
 
 	if (error) {
@@ -174,12 +178,13 @@ export async function reportInstallmentPayment(data: PaymentFormSchema) {
 
 export async function recordInstallmentPayment(data: PaymentFormSchema) {
 	const { supabase } = await getAuthenticatedClient();
+	const params = {
+		p_installment_id: data.installmentId,
+		p_paid_at: data.paidAt,
+	};
 	const { data: payment, error } = await supabase.rpc(
 		"record_installment_payment",
-		{
-			p_installment_id: data.installmentId,
-			p_paid_at: data.paidAt,
-		},
+		data.proofId ? { ...params, p_proof_id: data.proofId } : params,
 	);
 
 	if (error) {

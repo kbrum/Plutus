@@ -15,6 +15,7 @@ export type PaymentInstallment = {
 		installmentNumber: number;
 		amount: number;
 		paidAt: string;
+		proofId: string | null;
 	} | null;
 };
 
@@ -28,6 +29,7 @@ export type PaymentListItem = {
 	paidAt: string;
 	createdAt: string;
 	confirmedAt: string | null;
+	proofId: string | null;
 	status: "reported" | "confirmed" | "rejected";
 	role: PaymentRole;
 	counterpartName: string;

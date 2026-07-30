@@ -15,16 +15,27 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "#/components/ui/dialog";
-
-const MAX_PROOF_SIZE = 5 * 1024 * 1024;
+import {
+	PAYMENT_PROOF_FILE_EXTENSIONS,
+	PAYMENT_PROOF_MAX_SIZE_BYTES,
+} from "../payment-proofs.constants";
 
 const acceptedProofTypes: Accept = {
-	"image/jpeg": [".jpg", ".jpeg"],
-	"image/png": [".png"],
-	"image/webp": [".webp"],
+	"image/jpeg": [...PAYMENT_PROOF_FILE_EXTENSIONS["image/jpeg"]],
+	"image/png": [...PAYMENT_PROOF_FILE_EXTENSIONS["image/png"]],
+	"image/webp": [...PAYMENT_PROOF_FILE_EXTENSIONS["image/webp"]],
 };
 
 function formatFileSize(bytes: number) {
+	if (bytes < 1024) return `${bytes} B`;
+	if (bytes < 1024 * 1024) {
+		return new Intl.NumberFormat("pt-BR", {
+			style: "unit",
+			unit: "kilobyte",
+			maximumFractionDigits: 0,
+		}).format(bytes / 1024);
+	}
+
 	return new Intl.NumberFormat("pt-BR", {
 		style: "unit",
 		unit: "megabyte",
@@ -42,11 +53,11 @@ function getRejectionMessage(rejection: FileRejection) {
 }
 
 function useFilePreview(file: File | null) {
-	const [previewUrl, setPreviewUrl] = useState("");
+	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!file) {
-			setPreviewUrl("");
+			setPreviewUrl(null);
 			return;
 		}
 
@@ -76,7 +87,7 @@ export function PaymentProofField({
 	const { getInputProps, getRootProps, isDragActive, open } = useDropzone({
 		accept: acceptedProofTypes,
 		maxFiles: 1,
-		maxSize: MAX_PROOF_SIZE,
+		maxSize: PAYMENT_PROOF_MAX_SIZE_BYTES,
 		multiple: false,
 		disabled,
 		noClick: Boolean(file),
@@ -105,7 +116,7 @@ export function PaymentProofField({
 						onClick={() => onEdit(file)}
 					>
 						<img
-							src={previewUrl}
+							src={previewUrl ?? undefined}
 							alt="Pré-visualização do comprovante"
 							className="size-14 shrink-0 rounded-lg border border-slate-700 object-cover"
 						/>
@@ -233,7 +244,9 @@ export function PaymentProofPreview({
 				<div className="mb-2 flex size-11 items-center justify-center rounded-xl border border-teal-300/15 bg-teal-400/10 text-teal-300">
 					<FileImage className="size-5" />
 				</div>
-				<DialogTitle>Pré-visualizar comprovante</DialogTitle>
+				<DialogTitle tabIndex={-1} autoFocus>
+					Pré-visualizar comprovante
+				</DialogTitle>
 				<DialogDescription className="leading-6 text-slate-400">
 					Confira se o valor, a data e os dados do pagamento estão legíveis
 					antes de salvar.
@@ -243,7 +256,7 @@ export function PaymentProofPreview({
 			<div className="space-y-3 py-2">
 				<div className="flex min-h-72 items-center justify-center overflow-hidden rounded-xl border border-slate-800 bg-slate-950/70 p-2">
 					<img
-						src={previewUrl}
+						src={previewUrl ?? undefined}
 						alt="Pré-visualização ampliada do comprovante"
 						className="max-h-[55vh] w-full rounded-lg object-contain"
 					/>

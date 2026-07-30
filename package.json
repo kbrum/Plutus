@@ -24,8 +24,6 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1097.0",
-    "@aws-sdk/s3-request-presigner": "^3.1097.0",
     "@faker-js/faker": "^10.3.0",
     "@sentry/cloudflare": "^10.68.0",
     "@sentry/tanstackstart-react": "^10.68.0",
@@ -42,6 +40,7 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/react-table": "latest",
+    "aws4fetch": "^1.0.20",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

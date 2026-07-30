@@ -1,5 +1,6 @@
 import { CalendarDays, Clock3, HandCoins, LoaderCircle } from "lucide-react";
 import { PaymentFormDialog } from "#/features/payments/components/PaymentFormDialog";
+import { PaymentProofViewer } from "#/features/payments/components/PaymentProofViewer";
 import { PaymentRequestActions } from "#/features/payments/components/PaymentRequestActions";
 import { useGetPaymentInstallments } from "#/features/payments/hooks/usePayments";
 import type { PaymentInstallment } from "#/features/payments/payments.types";
@@ -87,7 +88,7 @@ function InstallmentSection({
 	);
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-slate-800 bg-[#0b141d]">
+		<div className="overflow-hidden rounded-xl border border-slate-800 bg-card shadow-[0_1px_2px_oklch(0.28_0.02_80/0.04)]">
 			<div className="flex flex-col gap-4 border-b border-slate-800 p-5 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h2 className="font-semibold text-slate-100">{title}</h2>
@@ -113,7 +114,7 @@ function InstallmentSection({
 										Parcela {installment.installmentNumber} ·{" "}
 										{installment.counterpartName}
 									</p>
-									<p className="mt-2 text-xl font-bold text-slate-100">
+									<p className="mt-2 text-xl font-bold text-slate-100 tabular-nums">
 										{currencyFormatter.format(installment.totalAmount)}
 									</p>
 								</div>
@@ -128,6 +129,11 @@ function InstallmentSection({
 							</p>
 							{installment.role === "lender" && installment.pendingPayment ? (
 								<div className="mt-4 border-t border-slate-800/70 pt-4">
+									{installment.pendingPayment.proofId ? (
+										<PaymentProofViewer
+											paymentId={installment.pendingPayment.id}
+										/>
+									) : null}
 									<PaymentRequestActions payment={installment.pendingPayment} />
 								</div>
 							) : null}
@@ -153,10 +159,10 @@ function InstallmentStatus({
 	}
 
 	const config = {
-		pending: ["Pendente", "text-amber-300 bg-amber-400/8 border-amber-300/15"],
+		pending: ["Pendente", "text-cyan-300 bg-cyan-400/8 border-cyan-300/15"],
 		paid: ["Paga", "text-emerald-300 bg-emerald-400/8 border-emerald-300/15"],
 		overdue: ["Em atraso", "text-rose-300 bg-rose-400/8 border-rose-300/15"],
-		cancelled: ["Cancelada", "text-slate-500 bg-slate-800 border-slate-700"],
+		cancelled: ["Cancelada", "text-slate-400 bg-slate-800 border-slate-700"],
 	}[installment.status];
 
 	return (

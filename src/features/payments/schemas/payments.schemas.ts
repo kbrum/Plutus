@@ -3,6 +3,7 @@ import { z } from "zod";
 export const paymentFormSchema = z.object({
 	installmentId: z.uuid("Selecione uma parcela válida"),
 	paidAt: z.iso.datetime("Informe uma data e um horário de pagamento válidos"),
+	proofId: z.uuid("Informe um comprovante válido").optional(),
 });
 
 export const paymentIdSchema = z.object({

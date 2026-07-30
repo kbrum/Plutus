@@ -1,6 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import type {
+	PaymentProofUploadIntent,
+	PaymentProofUploadProgress,
+	PaymentProofUploadStage,
+} from "../payment-proofs.types";
+import {
+	getPaymentProofUploadDiagnostic,
+	uploadPaymentProofFile,
+} from "../payment-proofs.upload";
+import { paymentProofMimeTypeSchema } from "../schemas/payment-proofs.schemas";
 import type { PaymentFormSchema } from "../schemas/payments.schemas";
+import {
+	confirmPaymentProofUploadFn,
+	createPaymentProofUploadFn,
+	reportPaymentProofUploadFailureFn,
+} from "../server/payment-proofs.functions";
 import {
 	confirmInstallmentPaymentFn,
 	getPaymentInstallmentsFn,
@@ -51,15 +67,90 @@ export function useGetPayments() {
 
 function usePaymentFormMutation(kind: "record" | "report") {
 	const queryClient = useQueryClient();
+	const [uploadStage, setUploadStage] =
+		useState<PaymentProofUploadStage>("idle");
+	const [uploadProgress, setUploadProgress] =
+		useState<PaymentProofUploadProgress | null>(null);
 	const recordPayment = useServerFn(recordInstallmentPaymentFn);
 	const reportPayment = useServerFn(reportInstallmentPaymentFn);
+	const createProofUpload = useServerFn(createPaymentProofUploadFn);
+	const confirmProofUpload = useServerFn(confirmPaymentProofUploadFn);
+	const reportProofUploadFailure = useServerFn(
+		reportPaymentProofUploadFailureFn,
+	);
 	const mutation = useMutation({
-		mutationFn: (data: PaymentFormSchema) =>
-			kind === "record" ? recordPayment({ data }) : reportPayment({ data }),
+		mutationFn: async ({
+			data,
+			proofFile,
+		}: {
+			data: PaymentFormSchema;
+			proofFile: File | null;
+		}) => {
+			let proofId: string | undefined;
+			if (proofFile) {
+				setUploadStage("requesting-url");
+				let intent: PaymentProofUploadIntent;
+				try {
+					intent = await createProofUpload({
+						data: {
+							installmentId: data.installmentId,
+							originalFilename: proofFile.name,
+							mimeType: paymentProofMimeTypeSchema.parse(proofFile.type),
+							sizeBytes: proofFile.size,
+						},
+					});
+				} catch (error) {
+					console.error(
+						"[payment-proof-upload] failed to create upload intent",
+						error,
+					);
+					throw error;
+				}
+				setUploadStage("uploading");
+				try {
+					await uploadPaymentProofFile(proofFile, intent, setUploadProgress);
+				} catch (error) {
+					const diagnostic = getPaymentProofUploadDiagnostic(error);
+					if (diagnostic) {
+						try {
+							await reportProofUploadFailure({
+								data: { proofId: intent.proofId, ...diagnostic },
+							});
+						} catch (reportError) {
+							console.error(
+								"[payment-proof-upload] failed to report diagnostic",
+								reportError,
+							);
+						}
+					}
+					throw error;
+				}
+				setUploadStage("confirming");
+				await confirmProofUpload({ data: { proofId: intent.proofId } });
+				proofId = intent.proofId;
+				setUploadStage("uploaded");
+			}
+
+			const paymentData = proofId ? { ...data, proofId } : data;
+			return kind === "record"
+				? recordPayment({ data: paymentData })
+				: reportPayment({ data: paymentData });
+		},
+		onMutate: ({ proofFile }) => {
+			setUploadProgress(null);
+			setUploadStage(proofFile ? "preparing" : "idle");
+		},
+		onError: () => setUploadStage("error"),
 		onSuccess: () => invalidatePaymentQueries(queryClient),
 	});
 
-	return { submitPayment: mutation.mutateAsync, isLoading: mutation.isPending };
+	return {
+		submitPayment: (data: PaymentFormSchema, proofFile: File | null = null) =>
+			mutation.mutateAsync({ data, proofFile }),
+		isLoading: mutation.isPending,
+		uploadStage,
+		uploadProgress,
+	};
 }
 
 export function useRecordInstallmentPayment() {

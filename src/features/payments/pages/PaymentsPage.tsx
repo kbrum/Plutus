@@ -7,6 +7,7 @@ import {
 	ReceiptText,
 	XCircle,
 } from "lucide-react";
+import { PaymentProofViewer } from "../components/PaymentProofViewer";
 import { PaymentRequestActions } from "../components/PaymentRequestActions";
 import { useGetPayments } from "../hooks/usePayments";
 import type { PaymentListItem } from "../payments.types";
@@ -106,7 +107,7 @@ function PaymentSection({
 	showActions?: boolean;
 }) {
 	return (
-		<div className="overflow-hidden rounded-2xl border border-slate-800 bg-[#0b141d]">
+		<div className="overflow-hidden rounded-xl border border-slate-800 bg-card shadow-[0_1px_2px_oklch(0.28_0.02_80/0.04)]">
 			<div className="border-b border-slate-800 p-5">
 				<h2 className="font-semibold text-slate-100">{title}</h2>
 				<p className="mt-1 text-xs text-slate-500">{description}</p>
@@ -132,7 +133,7 @@ function PaymentSection({
 										Parcela {payment.installmentNumber} ·{" "}
 										{payment.counterpartName}
 									</Link>
-									<p className="mt-2 text-xl font-bold text-slate-100">
+									<p className="mt-2 text-xl font-bold text-slate-100 tabular-nums">
 										{currencyFormatter.format(payment.amount)}
 									</p>
 									<p className="mt-2 text-xs text-slate-500">
@@ -147,6 +148,9 @@ function PaymentSection({
 											payment.dueDate ? `${payment.dueDate}T00:00:00` : "",
 										)}
 									</p>
+									{payment.proofId ? (
+										<PaymentProofViewer paymentId={payment.id} />
+									) : null}
 								</div>
 								<PaymentStatus payment={payment} />
 							</div>
