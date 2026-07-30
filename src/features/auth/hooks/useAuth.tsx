@@ -14,7 +14,7 @@ export function useLogin() {
 	const login = useMutation({
 		mutationFn: (credentials: LoginSchema) => loginFn({ data: credentials }),
 		onSuccess: () => {
-			queryClient.removeQueries({ queryKey: ["user"] });
+			queryClient.removeQueries();
 		},
 	});
 
@@ -30,6 +30,7 @@ export function useLogout() {
 	const logout = useMutation({
 		mutationFn: () => logoutFn(),
 		onSuccess: () => {
+			queryClient.removeQueries();
 			queryClient.setQueryData(["user"], null);
 		},
 	});
@@ -47,7 +48,7 @@ export function useRegister() {
 	const registerMutation = useMutation({
 		mutationFn: (info: RegisterSchema) => registerServerFn({ data: info }),
 		onSuccess: () => {
-			queryClient.removeQueries({ queryKey: ["user"] });
+			queryClient.removeQueries();
 		},
 	});
 

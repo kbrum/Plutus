@@ -128,8 +128,8 @@ export function CreateLoanProposalDialog({
 							: "Definir termos")}
 			</Button>
 
-			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] p-0 text-slate-100 sm:max-w-xl">
-				<div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.11),transparent_44%)] px-6 py-5">
+			<DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover p-0 text-slate-100 sm:max-w-xl">
+				<div className="border-b border-slate-800 bg-secondary/55 px-6 py-5">
 					<DialogHeader>
 						<div className="mb-2 flex size-10 items-center justify-center rounded-xl border border-teal-300/15 bg-teal-400/10 text-teal-300">
 							<ArrowLeftRight className="size-5" />

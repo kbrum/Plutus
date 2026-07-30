@@ -86,17 +86,33 @@
 - [x] Destacar valor inicial, juros, valor total com juros e numero de parcelas sem sobrecarregar a interface.
 - [x] Navegar dos cards ativos para o dashboard individual do emprestimo.
 
-## 7. Pagamentos
+## 7. Pagamentos - MVP concluido
 
-- [ ] Permitir que o devedor registre um pagamento.
-- [ ] Coletar valor, data e observacao opcional.
-- [ ] Exibir o historico de pagamentos de cada parcela.
-- [ ] Permitir que o credor confirme ou rejeite um pagamento reportado.
-- [ ] Implementar RPCs transacionais para confirmar e rejeitar pagamentos.
-- [ ] Atualizar a parcela ao confirmar o pagamento.
-- [ ] Marcar automaticamente como atrasadas as parcelas pendentes com vencimento passado.
-- [ ] Marcar o emprestimo como `paid` quando todas as parcelas forem quitadas.
-- [ ] Impedir autorconfirmacao e operacoes de terceiros.
+- [x] Permitir que o credor registre definitivamente um pagamento.
+- [x] Permitir que o devedor envie um pagamento para confirmacao.
+- [x] Coletar a parcela, a data e o horario do pagamento.
+- [x] Organizar parcelas entre `A pagar` e `A receber`.
+- [x] Exibir valor, contraparte, vencimento e estado de cada parcela.
+- [x] Exibir o vencimento no seletor de parcelas e nos cards de pagamentos.
+- [x] Exibir data e horario informados nos cards e modais de confirmacao.
+- [x] Preservar o instante do pagamento com fuso horario no banco.
+- [x] Exibir o historico de pagamentos.
+- [x] Permitir que o credor confirme ou rejeite um pagamento reportado.
+- [x] Exibir as acoes de aceitar e rejeitar no rodape direito da parcela a receber.
+- [x] Manter as acoes de pagamento consistentes com o visual dos emprestimos.
+- [x] Identificar pagamentos reportados como `Aguardando confirmacao`.
+- [x] Exibir aviso de irreversibilidade antes de confirmacoes definitivas.
+- [x] Implementar RPCs transacionais para registrar, informar, confirmar e rejeitar pagamentos.
+- [x] Atualizar a parcela ao confirmar o pagamento.
+- [x] Identificar como atrasadas as parcelas pendentes com vencimento passado.
+- [x] Marcar o emprestimo como `paid` quando todas as parcelas forem quitadas.
+- [x] Impedir autorconfirmacao, duplicidade, reversao e operacoes de terceiros.
+- [x] Bloquear pagamentos futuros ou anteriores a ativacao do emprestimo.
+- [x] Isolar e invalidar caches de parcelas, pagamentos, emprestimos e dashboard.
+- [x] Adicionar testes de integracao para papeis e transicoes de pagamento.
+- [x] Criar a tabela segura de metadados dos comprovantes de pagamento.
+- [x] Adicionar selecao, validacao, compressao e pre-visualizacao local do comprovante opcional.
+- [ ] Persistir o comprovante no S3 e vincula-lo ao pagamento.
 
 ## 8. Dashboard
 
@@ -119,8 +135,9 @@
 - [ ] Ativar protecao contra senhas vazadas no Supabase Auth.
 - [x] Configurar Sentry para erros, tracing e logs no cliente e no Cloudflare Worker.
 - [ ] Confirmar o primeiro evento no Sentry apos configurar DSN e token de source maps.
-- [ ] Criar bucket S3 privado para avatares e comprovantes.
-- [ ] Configurar IAM minimo, CORS e lifecycle do bucket S3.
+- [x] Criar bucket S3 privado para avatares e comprovantes.
+- [x] Configurar IAM minimo e CORS do bucket S3.
+- [ ] Configurar lifecycle para limpar uploads abandonados.
 - [ ] Implementar uploads e downloads com URLs pre-assinadas.
 - [x] Executar `pnpm check`, `pnpm typecheck` e `pnpm build`.
 - [ ] Executar `pnpm test:loans` no Supabase local ou CI com Docker disponivel.

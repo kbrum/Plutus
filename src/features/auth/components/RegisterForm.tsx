@@ -230,7 +230,7 @@ export function RegisterForm() {
 					<Button
 						type="submit"
 						disabled={!canSubmit || isSubmitting || isLoading}
-						className="mt-2 h-12 w-full rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 font-bold text-slate-950 shadow-[0_12px_30px_rgba(245,158,11,0.18)] hover:from-amber-300 hover:to-orange-400"
+						className="mt-2 h-12 w-full rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-amber-300"
 					>
 						{isSubmitting || isLoading ? (
 							<>

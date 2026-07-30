@@ -40,7 +40,7 @@ const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
 const statusConfig = {
 	pending: {
 		label: "Pendente",
-		className: "border-amber-300/15 bg-amber-400/8 text-amber-300",
+		className: "border-cyan-300/15 bg-cyan-400/8 text-cyan-300",
 	},
 	accepted: {
 		label: "Aceita",
@@ -170,7 +170,7 @@ export function LoanRequestsList({
 						{loadingRequests.map((request) => (
 							<li
 								key={request}
-								className="animate-pulse rounded-2xl border border-slate-800 bg-[#0c141e] p-5"
+								className="animate-pulse rounded-xl border border-slate-800 bg-card p-5"
 							>
 								<div className="flex justify-between gap-4">
 									<div className="space-y-3">
@@ -213,7 +213,7 @@ export function LoanRequestsList({
 							return (
 								<li
 									key={request.id}
-									className={`rounded-2xl border border-slate-800/90 bg-[#0c141e] transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
+									className={`rounded-xl border border-slate-800/90 bg-card transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 								>
 									<div className="flex items-start justify-between gap-4">
 										<div className="flex min-w-0 gap-4">
@@ -290,7 +290,7 @@ export function LoanRequestsList({
 														)}
 													</Button>
 												</TooltipTrigger>
-												<TooltipContent className="border border-rose-300/15 bg-[#211214] text-rose-100">
+												<TooltipContent className="border border-rose-300/15 bg-popover text-rose-100">
 													Cancelar solicitação
 												</TooltipContent>
 											</Tooltip>
@@ -317,7 +317,7 @@ export function LoanRequestsList({
 															)}
 														</Button>
 													</TooltipTrigger>
-													<TooltipContent className="border border-emerald-300/15 bg-[#111d1b] text-emerald-100">
+													<TooltipContent className="border border-emerald-300/15 bg-popover text-emerald-100">
 														Aceitar solicitação
 													</TooltipContent>
 												</Tooltip>
@@ -342,7 +342,7 @@ export function LoanRequestsList({
 															)}
 														</Button>
 													</TooltipTrigger>
-													<TooltipContent className="border border-rose-300/15 bg-[#211214] text-rose-100">
+													<TooltipContent className="border border-rose-300/15 bg-popover text-rose-100">
 														Recusar solicitação
 													</TooltipContent>
 												</Tooltip>

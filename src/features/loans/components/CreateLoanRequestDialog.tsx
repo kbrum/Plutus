@@ -127,7 +127,7 @@ function LoanRequestDialog(props: LoanRequestDialogProps) {
 					<TooltipContent
 						side="top"
 						sideOffset={8}
-						className="border border-emerald-300/15 bg-[#111d1b] text-emerald-100"
+						className="border border-emerald-300/15 bg-popover text-emerald-100"
 					>
 						Fazer solicitação de empréstimo
 					</TooltipContent>
@@ -143,8 +143,8 @@ function LoanRequestDialog(props: LoanRequestDialogProps) {
 				</Button>
 			)}
 
-			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] p-0 text-slate-100 sm:max-w-lg">
-				<div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.11),transparent_44%)] px-6 py-5">
+			<DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover p-0 text-slate-100 sm:max-w-lg">
+				<div className="border-b border-slate-800 bg-secondary/55 px-6 py-5">
 					<DialogHeader>
 						<div className="mb-2 flex size-10 items-center justify-center rounded-xl border border-teal-300/15 bg-teal-400/10 text-teal-300">
 							<UserRound className="size-5" />
@@ -201,11 +201,18 @@ function LoanRequestDialog(props: LoanRequestDialogProps) {
 											<SelectTrigger
 												id={field.name}
 												aria-invalid={Boolean(error)}
-												className="h-12 w-full rounded-xl border-slate-700/80 bg-slate-950/45 text-slate-100 shadow-none focus-visible:border-teal-400/60 focus-visible:ring-teal-400/15"
+												className="h-12 w-full rounded-xl border-slate-700/80 bg-slate-950/45 text-slate-100 shadow-none focus-visible:border-ring focus-visible:ring-ring"
 											>
 												<SelectValue placeholder={placeholder} />
 											</SelectTrigger>
-											<SelectContent className="border-slate-700 bg-[#0b141d] text-slate-200">
+											<SelectContent
+												position="popper"
+												side="bottom"
+												align="start"
+												sideOffset={4}
+												avoidCollisions={false}
+												className="border-slate-700 bg-popover text-slate-200"
+											>
 												{members.map((member) => (
 													<SelectItem key={member.id} value={member.id}>
 														{member.display_name}
@@ -297,7 +304,7 @@ function LoanRequestDialog(props: LoanRequestDialogProps) {
 										placeholder="Conte brevemente para que você precisa do empréstimo."
 										value={field.state.value ?? ""}
 										aria-invalid={Boolean(error)}
-										className="resize-none rounded-xl border-slate-700/80 bg-slate-950/45 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-teal-400/60 focus-visible:ring-teal-400/15"
+										className="resize-none rounded-xl border-slate-700/80 bg-slate-950/45 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-ring focus-visible:ring-ring"
 										onBlur={field.handleBlur}
 										onChange={(event) => field.handleChange(event.target.value)}
 									/>

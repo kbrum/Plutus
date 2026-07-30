@@ -55,7 +55,7 @@ export function MembersPage() {
 					placeholder="Pesquisar membro por nome"
 					value={search}
 					disabled={isLoading || isError}
-					className="h-11 rounded-xl border-slate-700/80 bg-slate-900/55 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-teal-400/60 focus-visible:ring-teal-400/15"
+					className="h-11 rounded-xl border-slate-700/80 bg-slate-900/55 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-ring focus-visible:ring-ring"
 					onChange={(event) => setSearch(event.target.value)}
 				/>
 			</div>
@@ -66,7 +66,7 @@ export function MembersPage() {
 						{loadingCards.map((card) => (
 							<li
 								key={card}
-								className="flex animate-pulse items-center gap-4 rounded-2xl border border-slate-800/70 bg-[#0c141e] p-4"
+								className="flex animate-pulse items-center gap-4 rounded-xl border border-slate-800/70 bg-card p-4"
 							>
 								<div className="size-11 rounded-2xl bg-slate-800" />
 								<div className="flex-1 space-y-2">

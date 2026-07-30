@@ -195,7 +195,7 @@ export function LoanHistoryDialog() {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto border-slate-800 bg-[#0b141d] text-slate-100 sm:max-w-3xl">
+			<DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-slate-800 bg-popover text-slate-100 sm:max-w-3xl">
 				<DialogHeader>
 					<DialogTitle>Histórico de crédito</DialogTitle>
 					<DialogDescription className="leading-6 text-slate-500">
@@ -245,7 +245,7 @@ export function LoanHistoryDialog() {
 						<SelectTrigger className="h-full min-h-10 w-full rounded-xl border-slate-800 bg-slate-950/40 text-slate-300 shadow-none">
 							<SelectValue placeholder="Filtrar por status" />
 						</SelectTrigger>
-						<SelectContent className="border-slate-700 bg-[#0b141d] text-slate-200">
+						<SelectContent className="border-slate-700 bg-popover text-slate-200">
 							{statusFilterOptions.map((option) => (
 								<SelectItem key={option.value} value={option.value}>
 									{option.label}

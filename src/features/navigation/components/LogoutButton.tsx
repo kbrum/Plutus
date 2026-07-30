@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useLogout } from "#/features/auth/hooks/useAuth";
 import { itemClassName } from "./AppSidebar";
 
-export function LogoutButton() {
+export function LogoutButton({ showLabel = false }: { showLabel?: boolean }) {
 	const navigate = useNavigate();
 	const { logout, isLoading } = useLogout();
 
@@ -31,7 +31,7 @@ export function LogoutButton() {
 			) : (
 				<>
 					<LogOut className="size-[1.1rem] shrink-0" />
-					<span className="hidden md:block">Sair</span>
+					<span className={showLabel ? "block" : "hidden md:block"}>Sair</span>
 				</>
 			)}
 		</button>

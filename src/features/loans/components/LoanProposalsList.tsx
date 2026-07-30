@@ -150,7 +150,7 @@ export function LoanProposalsList({
 				{loadingProposals.map((proposal) => (
 					<li
 						key={proposal}
-						className="h-44 animate-pulse rounded-2xl border border-slate-800 bg-[#0c141e]"
+						className="h-44 animate-pulse rounded-xl border border-slate-800 bg-card"
 					/>
 				))}
 			</ul>
@@ -210,7 +210,7 @@ export function LoanProposalsList({
 				return (
 					<li
 						key={proposal.id}
-						className={`rounded-2xl border border-slate-800/90 bg-[#0c141e] transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
+						className={`rounded-xl border border-slate-800/90 bg-card transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 					>
 						<div className="flex items-start justify-between gap-4">
 							<div className="flex min-w-0 gap-4">

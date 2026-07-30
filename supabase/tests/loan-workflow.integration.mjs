@@ -77,6 +77,31 @@ async function createRequest(amount) {
 	return data.id;
 }
 
+async function createAcceptedLoan(amount, installmentCount) {
+	const requestId = await createRequest(amount);
+	const acceptedRequest = await lender.rpc("accept_loan_request", {
+		p_request_id: requestId,
+	});
+	assert.ifError(acceptedRequest.error);
+
+	const proposal = await lender.rpc("create_loan_proposal", {
+		p_loan_request_id: requestId,
+		p_amount: amount,
+		p_interest_rate: 10,
+		p_installment_count: installmentCount,
+		p_first_due_date: "2027-01-15",
+		p_message: "Teste de pagamentos",
+		p_parent_proposal_id: null,
+	});
+	assert.ifError(proposal.error);
+
+	const acceptedProposal = await borrower.rpc("accept_loan_proposal", {
+		p_proposal_id: proposal.data.id,
+	});
+	assert.ifError(acceptedProposal.error);
+	return acceptedProposal.data;
+}
+
 before(async () => {
 	const environment = getLocalSupabaseEnvironment();
 	apiUrl = environment.API_URL;
@@ -114,6 +139,19 @@ after(async () => {
 	const loanIds = loans?.map((loan) => loan.id) ?? [];
 
 	if (loanIds.length > 0) {
+		const { data: installments } = await admin
+			.from("installments")
+			.select("id")
+			.in("loan_id", loanIds);
+		const installmentIds =
+			installments?.map((installment) => installment.id) ?? [];
+
+		if (installmentIds.length > 0) {
+			await admin
+				.from("payments")
+				.delete()
+				.in("installment_id", installmentIds);
+		}
 		await admin.from("installments").delete().in("loan_id", loanIds);
 		await admin.from("loans").delete().in("id", loanIds);
 	}
@@ -212,4 +250,115 @@ test("duas aceitações concorrentes formalizam somente um empréstimo", async (
 		.eq("loan_id", loans[0].id);
 	assert.ifError(installmentsError);
 	assert.equal(count, 4);
+});
+
+test("devedor solicita e credor decide o pagamento", async () => {
+	const loan = await createAcceptedLoan(12_000, 2);
+	const paidAt = new Date().toISOString();
+	const { data: installments, error: installmentsError } = await borrower
+		.from("installments")
+		.select("id, status")
+		.eq("loan_id", loan.id)
+		.order("installment_number");
+	assert.ifError(installmentsError);
+
+	const firstReport = await borrower.rpc("report_installment_payment", {
+		p_installment_id: installments[0].id,
+		p_paid_at: paidAt,
+	});
+	assert.ifError(firstReport.error);
+	assert.equal(firstReport.data.status, "reported");
+
+	const { data: unchangedInstallment } = await borrower
+		.from("installments")
+		.select("status")
+		.eq("id", installments[0].id)
+		.single();
+	assert.equal(unchangedInstallment.status, "pending");
+
+	const borrowerConfirmation = await borrower.rpc(
+		"confirm_installment_payment",
+		{ p_payment_id: firstReport.data.id },
+	);
+	assert.ok(borrowerConfirmation.error);
+	assert.match(borrowerConfirmation.error.message, /Somente o credor/);
+
+	const outsiderConfirmation = await outsider.rpc(
+		"confirm_installment_payment",
+		{ p_payment_id: firstReport.data.id },
+	);
+	assert.ok(outsiderConfirmation.error);
+
+	const rejected = await lender.rpc("reject_installment_payment", {
+		p_payment_id: firstReport.data.id,
+	});
+	assert.ifError(rejected.error);
+	assert.equal(rejected.data.status, "rejected");
+
+	const secondReport = await borrower.rpc("report_installment_payment", {
+		p_installment_id: installments[0].id,
+		p_paid_at: paidAt,
+	});
+	assert.ifError(secondReport.error);
+
+	const confirmed = await lender.rpc("confirm_installment_payment", {
+		p_payment_id: secondReport.data.id,
+	});
+	assert.ifError(confirmed.error);
+	assert.equal(confirmed.data.status, "confirmed");
+
+	const { data: paidInstallment } = await lender
+		.from("installments")
+		.select("status, paid_at")
+		.eq("id", installments[0].id)
+		.single();
+	assert.equal(paidInstallment.status, "paid");
+	assert.ok(paidInstallment.paid_at);
+
+	const duplicate = await lender.rpc("record_installment_payment", {
+		p_installment_id: installments[0].id,
+		p_paid_at: paidAt,
+	});
+	assert.ok(duplicate.error);
+	assert.match(duplicate.error.message, /não está disponível/);
+});
+
+test("credor registra pagamento definitivo e quita o empréstimo", async () => {
+	const loan = await createAcceptedLoan(5_000, 1);
+	const paidAt = new Date().toISOString();
+	const { data: installment, error: installmentError } = await lender
+		.from("installments")
+		.select("id")
+		.eq("loan_id", loan.id)
+		.single();
+	assert.ifError(installmentError);
+
+	const borrowerAttempt = await borrower.rpc("record_installment_payment", {
+		p_installment_id: installment.id,
+		p_paid_at: paidAt,
+	});
+	assert.ok(borrowerAttempt.error);
+	assert.match(borrowerAttempt.error.message, /Somente o credor/);
+
+	const recorded = await lender.rpc("record_installment_payment", {
+		p_installment_id: installment.id,
+		p_paid_at: paidAt,
+	});
+	assert.ifError(recorded.error);
+	assert.equal(recorded.data.status, "confirmed");
+
+	const { data: paidLoan, error: paidLoanError } = await borrower
+		.from("loans")
+		.select("status, paid_at")
+		.eq("id", loan.id)
+		.single();
+	assert.ifError(paidLoanError);
+	assert.equal(paidLoan.status, "paid");
+	assert.ok(paidLoan.paid_at);
+
+	const reversal = await lender
+		.from("payments")
+		.update({ status: "rejected" })
+		.eq("id", recorded.data.id);
+	assert.ok(reversal.error);
 });

@@ -8,7 +8,7 @@ type MemberCardProps = {
 
 export function MemberCard({ id, name }: MemberCardProps) {
 	return (
-		<li className="group flex items-center gap-4 rounded-2xl border border-slate-800/90 bg-[#0c141e] p-4 transition-colors hover:border-slate-700 hover:bg-[#0e1823]">
+		<li className="group flex items-center gap-4 rounded-xl border border-slate-800/90 bg-card p-4 transition-colors hover:border-slate-700 hover:bg-accent/45">
 			<div className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-teal-300/15 bg-teal-400/8 text-teal-300">
 				<UserRound className="size-5" />
 			</div>

@@ -20,7 +20,7 @@ export function LoanProposalAwaitingTermsList({
 
 	if (isLoading) {
 		return (
-			<div className="h-44 animate-pulse rounded-2xl border border-slate-800 bg-[#0c141e]" />
+			<div className="h-44 animate-pulse rounded-xl border border-slate-800 bg-card" />
 		);
 	}
 
@@ -52,7 +52,7 @@ export function LoanProposalAwaitingTermsList({
 			{loanRequests.map((request) => (
 				<li
 					key={request.id}
-					className="rounded-2xl border border-slate-800/90 bg-[#0c141e] p-4"
+					className="rounded-xl border border-slate-800/90 bg-card p-4"
 				>
 					<div className="flex items-start justify-between gap-3">
 						<div className="flex min-w-0 gap-3">
