@@ -122,7 +122,7 @@ export function LoanProposalSetupList({
 						key={request.id}
 						className="rounded-xl border border-slate-800/90 bg-card p-4 transition-colors hover:border-violet-400/30"
 					>
-						<div className="flex items-start justify-between gap-4">
+						<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
 							<div className="min-w-0">
 								<p className="text-xs font-semibold tracking-[0.12em] text-slate-500 uppercase">
 									Definir proposta para
@@ -134,7 +134,7 @@ export function LoanProposalSetupList({
 									Defina os termos do empréstimo e envie ao solicitante.
 								</p>
 							</div>
-							<div className="flex shrink-0 items-center gap-1.5">
+							<div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
 								<span className="rounded-full border border-violet-300/15 bg-violet-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-violet-200">
 									Proposta
 								</span>
@@ -202,7 +202,7 @@ export function LoanProposalSetupList({
 							) : null}
 						</div>
 
-						<div className="mt-5 flex flex-wrap justify-end gap-2">
+						<div className="mt-5 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
 							<CreateLoanProposalDialog
 								loanRequestId={request.id}
 								counterpartName={borrowerName}
@@ -217,7 +217,7 @@ export function LoanProposalSetupList({
 								type="button"
 								size="sm"
 								disabled={!draft || isSending}
-								className="rounded-lg bg-amber-400 font-bold text-slate-950 hover:bg-amber-300"
+								className="h-11 rounded-lg bg-amber-400 font-bold text-slate-950 hover:bg-amber-300 sm:h-8"
 								onClick={() => void handleSend(request.id)}
 							>
 								{isSending && sendingRequestId === request.id ? (

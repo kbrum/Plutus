@@ -33,7 +33,7 @@ function AuthenticatedLayout() {
 			<AppSidebar />
 			<main
 				id="main-content"
-				className="min-w-0 flex-1 overflow-x-hidden pt-16 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pt-0 md:pb-0"
+				className="min-w-0 flex-1 overflow-x-hidden pt-16 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pt-0 lg:pb-0"
 			>
 				<Outlet />
 			</main>
