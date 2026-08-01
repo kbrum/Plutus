@@ -3,11 +3,14 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Outlet,
 	ScriptOnce,
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "#/components/ui/sonner";
+import { AppVersionGuard } from "#/features/app-version/components/AppVersionGuard";
+import { getAppVersionFn } from "#/features/app-version/server/app-version.functions";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
@@ -18,6 +21,7 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	loader: () => getAppVersionFn(),
 	head: () => ({
 		meta: [
 			{
@@ -42,8 +46,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 		],
 	}),
+	component: RootComponent,
 	shellComponent: RootDocument,
 });
+
+function RootComponent() {
+	const initialVersion = Route.useLoaderData();
+
+	return (
+		<AppVersionGuard initialVersion={initialVersion}>
+			<Outlet />
+		</AppVersionGuard>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
