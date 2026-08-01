@@ -197,7 +197,7 @@ export function LoansPage() {
 	}, [currentUserId]);
 
 	return (
-		<section className="mx-auto w-full max-w-[90rem] px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
+		<section className="mx-auto w-full max-w-[90rem] px-4 py-7 sm:px-8 sm:py-10 lg:px-10">
 			<header className="flex flex-col justify-between gap-6 border-b border-slate-800/80 pb-7 lg:flex-row lg:items-end">
 				<div>
 					<p className="text-xs font-bold tracking-[0.18em] text-teal-300/80 uppercase">
@@ -216,7 +216,7 @@ export function LoansPage() {
 				</div>
 			</header>
 
-			<div className="mt-7 grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
+			<div className="mt-7 grid items-start gap-4 lg:grid-cols-2 2xl:grid-cols-3">
 				<WorkflowColumn
 					title="Precisa da sua atenção"
 					description="Pedidos e condições aguardando sua decisão."

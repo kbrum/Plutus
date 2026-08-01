@@ -22,6 +22,39 @@ function getSignedUrlExpiration() {
 	).toISOString();
 }
 
+async function getS3ObjectMetadata(objectUrl: string, proofId: string) {
+	const response = await createS3Client().fetch(objectUrl, {
+		method: "GET",
+		headers: { Range: "bytes=0-0" },
+	});
+	const diagnostic = {
+		status: response.status,
+		statusText: response.statusText,
+		requestId: response.headers.get("x-amz-request-id"),
+		extendedRequestId: response.headers.get("x-amz-id-2"),
+	};
+
+	if (!response.ok) {
+		await response.body?.cancel();
+		console.error("[payment-proof-upload] S3 verification failed", {
+			proofId,
+			...diagnostic,
+		});
+		throw new Error("Não foi possível confirmar o comprovante enviado");
+	}
+
+	const contentRange = response.headers.get("Content-Range");
+	const totalSize = contentRange?.match(/\/(\d+)$/)?.[1];
+	const contentLength = Number(
+		totalSize ?? response.headers.get("Content-Length"),
+	);
+	const contentType = response.headers.get("Content-Type");
+	const etag = response.headers.get("ETag");
+	await response.body?.cancel();
+
+	return { contentLength, contentType, etag };
+}
+
 export async function createPaymentProofUpload(
 	data: CreatePaymentProofUploadSchema,
 ): Promise<PaymentProofUploadIntent> {
@@ -93,26 +126,25 @@ export async function confirmPaymentProofUpload(proofId: string) {
 		.single();
 
 	if (error) throw error;
+	if (proof.status === "uploaded") {
+		return proof;
+	}
 	if (proof.status !== "pending") {
 		throw new Error("O comprovante já foi processado");
 	}
 
-	const s3 = createS3Client();
 	const objectUrl = getS3ObjectUrl(proof.object_key);
-	const head = await s3.fetch(objectUrl, { method: "HEAD" });
-	if (!head.ok) {
-		throw new Error("O arquivo enviado não foi encontrado no S3");
-	}
-	const contentLength = Number(head.headers.get("Content-Length"));
-	const contentType = head.headers.get("Content-Type");
-	const etag = head.headers.get("ETag");
+	const { contentLength, contentType, etag } = await getS3ObjectMetadata(
+		objectUrl,
+		proof.id,
+	);
 	const metadataMatches =
 		contentLength === proof.size_bytes &&
 		contentType === proof.mime_type &&
 		Boolean(etag);
 
 	if (!metadataMatches) {
-		await s3.fetch(objectUrl, { method: "DELETE" });
+		await createS3Client().fetch(objectUrl, { method: "DELETE" });
 		throw new Error(
 			"O arquivo enviado não corresponde ao comprovante preparado",
 		);

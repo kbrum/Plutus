@@ -1,6 +1,14 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
+import {
+	ArrowRight,
+	Eye,
+	EyeOff,
+	LoaderCircle,
+	LockKeyhole,
+	Mail,
+} from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "#/components/ui/button";
@@ -19,6 +27,7 @@ function showLoginError() {
 export function LoginForm() {
 	const navigate = useNavigate();
 	const { login, isLoading } = useLogin();
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			email: "",
@@ -97,14 +106,29 @@ export function LoginForm() {
 							<Input
 								id={field.name}
 								name={field.name}
-								type="password"
+								type={isPasswordVisible ? "text" : "password"}
 								autoComplete="current-password"
 								placeholder="Digite sua senha"
 								value={field.state.value}
-								className="h-12 rounded-xl border-slate-700/80 bg-slate-900/65 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
+								className="h-12 rounded-xl border-slate-700/80 bg-slate-900/65 pr-12 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
 								onBlur={field.handleBlur}
 								onChange={(event) => field.handleChange(event.target.value)}
 							/>
+							<button
+								type="button"
+								aria-label={
+									isPasswordVisible ? "Ocultar senha" : "Mostrar senha"
+								}
+								aria-pressed={isPasswordVisible}
+								className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-slate-500 transition-colors hover:text-slate-300 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-amber-400"
+								onClick={() => setIsPasswordVisible((visible) => !visible)}
+							>
+								{isPasswordVisible ? (
+									<EyeOff aria-hidden="true" className="size-4" />
+								) : (
+									<Eye aria-hidden="true" className="size-4" />
+								)}
+							</button>
 						</div>
 					</div>
 				)}

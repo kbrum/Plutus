@@ -215,7 +215,7 @@ export function LoanRequestsList({
 									key={request.id}
 									className={`rounded-xl border border-slate-800/90 bg-card transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 								>
-									<div className="flex items-start justify-between gap-4">
+									<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
 										<div className="flex min-w-0 gap-4">
 											<div
 												className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${
@@ -241,7 +241,7 @@ export function LoanRequestsList({
 											</div>
 										</div>
 
-										<div className="flex shrink-0 items-center gap-1.5">
+										<div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
 											<span className="w-fit rounded-full border border-cyan-300/15 bg-cyan-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-cyan-200">
 												Solicitação
 											</span>
@@ -280,7 +280,7 @@ export function LoanRequestsList({
 														size="icon"
 														disabled={isDeleting}
 														aria-label="Cancelar solicitação"
-														className="size-9 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300"
+														className="size-11 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300 sm:size-9"
 														onClick={() => void handleCancelRequest(request.id)}
 													>
 														{isDeleting && deletingRequestId === request.id ? (
@@ -304,7 +304,7 @@ export function LoanRequestsList({
 															size="icon"
 															aria-label="Aceitar solicitação"
 															disabled={isAccepting || isRejecting}
-															className="size-9 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-emerald-400/30 hover:!bg-emerald-400/10 hover:!text-emerald-300"
+															className="size-11 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-emerald-400/30 hover:!bg-emerald-400/10 hover:!text-emerald-300 sm:size-9"
 															onClick={() =>
 																void handleAcceptRequest(request.id)
 															}
@@ -329,7 +329,7 @@ export function LoanRequestsList({
 															size="icon"
 															aria-label="Recusar solicitação"
 															disabled={isAccepting || isRejecting}
-															className="size-9 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300"
+															className="size-11 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-rose-400/30 hover:!bg-rose-400/10 hover:!text-rose-300 sm:size-9"
 															onClick={() =>
 																void handleRejectRequest(request.id)
 															}

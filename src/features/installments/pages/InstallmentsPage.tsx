@@ -107,8 +107,8 @@ function InstallmentSection({
 			) : (
 				<ul className="divide-y divide-slate-800/80">
 					{installments.map((installment) => (
-						<li key={installment.id} className="p-5">
-							<div className="flex items-start justify-between gap-4">
+						<li key={installment.id} className="p-4 sm:p-5">
+							<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
 								<div>
 									<p className="text-sm font-semibold text-slate-200">
 										Parcela {installment.installmentNumber} ·{" "}

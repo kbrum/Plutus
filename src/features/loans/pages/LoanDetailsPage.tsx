@@ -242,7 +242,7 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 						return (
 							<li
 								key={installment.id}
-								className="grid gap-3 px-5 py-4 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center sm:px-6"
+								className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 px-4 py-4 sm:grid-cols-[auto_1fr_auto_auto] sm:items-center sm:px-6"
 							>
 								<span className="flex size-8 items-center justify-center rounded-lg bg-slate-800 text-xs font-bold text-slate-300">
 									{installment.installment_number}
@@ -258,13 +258,14 @@ export function LoanDetailsPage({ loanId }: LoanDetailsPageProps) {
 										{currencyFormatter.format(installment.interest_amount)}
 									</p>
 								</div>
-								<p className="text-xs text-slate-500">
+								<p className="col-start-2 text-xs text-slate-500 sm:col-auto">
+									<span className="sm:sr-only">Vence em </span>
 									{dateFormatter.format(
 										new Date(`${installment.due_date}T00:00:00`),
 									)}
 								</p>
 								<span
-									className={`text-xs font-bold ${installmentStatus.className}`}
+									className={`col-start-2 text-xs font-bold sm:col-auto ${installmentStatus.className}`}
 								>
 									{installmentStatus.label}
 								</span>

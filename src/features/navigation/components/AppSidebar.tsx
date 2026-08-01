@@ -58,7 +58,7 @@ export function AppSidebar() {
 
 	return (
 		<>
-			<header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar/95 px-5 backdrop-blur-md md:hidden">
+			<header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar/95 px-4 backdrop-blur-md lg:hidden">
 				<div className="flex items-center gap-2.5">
 					<span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
 						<Landmark className="size-[1.05rem]" />
@@ -84,7 +84,7 @@ export function AppSidebar() {
 			</header>
 
 			<nav
-				className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5rem+env(safe-area-inset-bottom))] grid-cols-5 border-t border-sidebar-border bg-sidebar/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+				className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5rem+env(safe-area-inset-bottom))] grid-cols-5 border-t border-sidebar-border bg-sidebar/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
 				aria-label="Navegação principal"
 			>
 				{navItems.map(({ label, shortLabel, icon: Icon, to }) => (
@@ -102,7 +102,7 @@ export function AppSidebar() {
 				))}
 			</nav>
 
-			<aside className="sticky top-0 hidden h-svh w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-5 py-6 md:flex">
+			<aside className="sticky top-0 hidden h-svh w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-5 py-6 lg:flex">
 				<div className="flex h-12 items-center gap-3 px-2">
 					<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
 						<Landmark className="size-5" />

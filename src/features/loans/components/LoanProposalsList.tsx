@@ -212,7 +212,7 @@ export function LoanProposalsList({
 						key={proposal.id}
 						className={`rounded-xl border border-slate-800/90 bg-card transition-colors hover:border-slate-700 ${compact ? "p-4" : "p-5 sm:p-6"}`}
 					>
-						<div className="flex items-start justify-between gap-4">
+						<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
 							<div className="flex min-w-0 gap-4">
 								<div
 									className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${
@@ -239,7 +239,7 @@ export function LoanProposalsList({
 									</p>
 								</div>
 							</div>
-							<div className="flex shrink-0 items-center gap-1.5">
+							<div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
 								<span className="w-fit rounded-full border border-violet-300/15 bg-violet-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-violet-200">
 									Proposta
 								</span>
@@ -301,7 +301,7 @@ export function LoanProposalsList({
 						) : null}
 
 						<div
-							className={`mt-5 ${isSent ? "flex flex-wrap justify-end gap-2" : "grid grid-cols-2 gap-2"}`}
+							className={`mt-5 ${isSent ? "grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:justify-end" : "grid grid-cols-1 gap-2 sm:grid-cols-2"} [&_button]:h-11 sm:[&_button]:h-8`}
 						>
 							{isSent ? (
 								<>
@@ -326,7 +326,7 @@ export function LoanProposalsList({
 								</>
 							) : (
 								<>
-									<div className="col-span-2 [&>button]:w-full">
+									<div className="sm:col-span-2 [&>button]:w-full">
 										<LoanProposalTimelineDialog
 											loanRequestId={proposal.loan_request_id}
 										/>
@@ -366,7 +366,7 @@ export function LoanProposalsList({
 										Recusar
 									</Button>
 									<div
-										className={`${draft ? "" : "col-span-2"} [&>button]:w-full`}
+										className={`${draft ? "" : "sm:col-span-2"} [&>button]:w-full`}
 									>
 										<CreateLoanProposalDialog
 											loanRequestId={proposal.loan_request_id}

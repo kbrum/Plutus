@@ -2,12 +2,15 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import {
 	ArrowRight,
+	Eye,
+	EyeOff,
 	LoaderCircle,
 	LockKeyhole,
 	Mail,
 	ShieldCheck,
 	UserRound,
 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "#/components/ui/button";
@@ -35,6 +38,8 @@ function getErrorMessage(error: unknown) {
 export function RegisterForm() {
 	const navigate = useNavigate();
 	const { register, isLoading } = useRegister();
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			name: "",
@@ -165,15 +170,30 @@ export function RegisterForm() {
 									<Input
 										id={field.name}
 										name={field.name}
-										type="password"
+										type={isPasswordVisible ? "text" : "password"}
 										autoComplete="new-password"
 										placeholder="Mínimo 8 caracteres"
 										value={field.state.value}
 										aria-invalid={Boolean(error)}
-										className="h-11 rounded-xl border-slate-700/80 bg-slate-900/65 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
+										className="h-11 rounded-xl border-slate-700/80 bg-slate-900/65 pr-12 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
 										onBlur={field.handleBlur}
 										onChange={(event) => field.handleChange(event.target.value)}
 									/>
+									<button
+										type="button"
+										aria-label={
+											isPasswordVisible ? "Ocultar senha" : "Mostrar senha"
+										}
+										aria-pressed={isPasswordVisible}
+										className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-slate-500 transition-colors hover:text-slate-300 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-amber-400"
+										onClick={() => setIsPasswordVisible((visible) => !visible)}
+									>
+										{isPasswordVisible ? (
+											<EyeOff aria-hidden="true" className="size-4" />
+										) : (
+											<Eye aria-hidden="true" className="size-4" />
+										)}
+									</button>
 								</div>
 								{error ? (
 									<p className="text-xs text-rose-300">
@@ -202,15 +222,34 @@ export function RegisterForm() {
 									<Input
 										id={field.name}
 										name={field.name}
-										type="password"
+										type={isConfirmationVisible ? "text" : "password"}
 										autoComplete="new-password"
 										placeholder="Repita a senha"
 										value={field.state.value}
 										aria-invalid={Boolean(error)}
-										className="h-11 rounded-xl border-slate-700/80 bg-slate-900/65 pr-4 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
+										className="h-11 rounded-xl border-slate-700/80 bg-slate-900/65 pr-12 pl-11 text-slate-100 shadow-none placeholder:text-slate-600 focus-visible:border-amber-400/70 focus-visible:ring-amber-400/15"
 										onBlur={field.handleBlur}
 										onChange={(event) => field.handleChange(event.target.value)}
 									/>
+									<button
+										type="button"
+										aria-label={
+											isConfirmationVisible
+												? "Ocultar confirmação de senha"
+												: "Mostrar confirmação de senha"
+										}
+										aria-pressed={isConfirmationVisible}
+										className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-slate-500 transition-colors hover:text-slate-300 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-amber-400"
+										onClick={() =>
+											setIsConfirmationVisible((visible) => !visible)
+										}
+									>
+										{isConfirmationVisible ? (
+											<EyeOff aria-hidden="true" className="size-4" />
+										) : (
+											<Eye aria-hidden="true" className="size-4" />
+										)}
+									</button>
 								</div>
 								{error ? (
 									<p className="text-xs text-rose-300">

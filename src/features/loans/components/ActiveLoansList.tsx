@@ -78,7 +78,7 @@ export function ActiveLoansList() {
 							key={loan.id}
 							className="rounded-xl border border-slate-800/90 bg-card p-5 transition-colors hover:border-emerald-400/30"
 						>
-							<div className="flex items-start justify-between gap-3">
+							<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
 								<div className="flex min-w-0 gap-3">
 									<span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-400/8 text-emerald-300">
 										<HandCoins className="size-5" />
@@ -92,7 +92,7 @@ export function ActiveLoansList() {
 										</p>
 									</div>
 								</div>
-								<div className="flex shrink-0 items-center gap-1.5">
+								<div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
 									<span className="rounded-full border border-emerald-300/15 bg-emerald-400/8 px-2.5 py-1 text-[0.65rem] font-bold text-emerald-200">
 										Empréstimo
 									</span>
@@ -141,7 +141,7 @@ export function ActiveLoansList() {
 											asChild
 											variant="outline"
 											size="icon"
-											className="size-9 shrink-0 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-teal-400/30 hover:!bg-teal-400/10 hover:!text-teal-300"
+											className="size-11 shrink-0 rounded-lg border-slate-700/80 bg-slate-900/60 text-slate-500 shadow-none hover:!border-teal-400/30 hover:!bg-teal-400/10 hover:!text-teal-300 sm:size-9"
 										>
 											<Link
 												to="/loans/$loanId"

@@ -54,7 +54,7 @@ export function LoanProposalAwaitingTermsList({
 					key={request.id}
 					className="rounded-xl border border-slate-800/90 bg-card p-4"
 				>
-					<div className="flex items-start justify-between gap-3">
+					<div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
 						<div className="flex min-w-0 gap-3">
 							<span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-amber-300/15 bg-amber-400/8 text-amber-300">
 								<Settings className="size-5" />
@@ -71,7 +71,7 @@ export function LoanProposalAwaitingTermsList({
 								</p>
 							</div>
 						</div>
-						<div className="flex shrink-0 items-center gap-1.5">
+						<div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end">
 							<span className="w-fit rounded-full border border-violet-300/15 bg-violet-400/8 px-2.5 py-1 text-[0.68rem] font-bold text-violet-200">
 								Proposta
 							</span>
