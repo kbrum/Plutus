@@ -41,6 +41,23 @@ const amountFormatter = new Intl.NumberFormat("pt-BR", {
 	maximumFractionDigits: 0,
 });
 
+const interestRateFormatter = new Intl.NumberFormat("pt-BR", {
+	maximumFractionDigits: 10,
+});
+
+function normalizeInterestRateInput(value: string) {
+	const sanitizedValue = value.replace(/[^\d,.]/g, "");
+	const separatorIndex = sanitizedValue.search(/[,.]/);
+
+	if (separatorIndex === -1) {
+		return sanitizedValue;
+	}
+
+	return `${sanitizedValue.slice(0, separatorIndex + 1)}${sanitizedValue
+		.slice(separatorIndex + 1)
+		.replace(/[,.]/g, "")}`;
+}
+
 function getErrorMessage(error: unknown) {
 	if (typeof error === "string") {
 		return error;
@@ -104,7 +121,9 @@ export function CreateLoanProposalDialog({
 		const values = draft ?? defaultValues;
 		form.reset(values);
 		setInterestRateInput(
-			Number.isNaN(values.interestRate) ? "" : `${values.interestRate}%`,
+			Number.isNaN(values.interestRate)
+				? ""
+				: interestRateFormatter.format(values.interestRate),
 		);
 		setOpen(true);
 	}
@@ -215,12 +234,10 @@ export function CreateLoanProposalDialog({
 												className="h-11 rounded-xl border-slate-700 bg-slate-950/45"
 												onBlur={field.handleBlur}
 												onChange={(event) => {
-													const input = event.target.value;
-													const normalizedValue = input
-														.replace(/%/g, "")
-														.replace(",", ".")
-														.replace(/[^\d.+-]/g, "")
-														.trim();
+													const input = normalizeInterestRateInput(
+														event.target.value,
+													);
+													const normalizedValue = input.replace(",", ".");
 
 													setInterestRateInput(input);
 													field.handleChange(
