@@ -72,33 +72,19 @@ export function DashboardPage() {
 				</div>
 			</header>
 
-			<div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-				<MetricCard
-					icon={ArrowDownLeft}
-					label="Saldo a receber"
-					value={dashboard.summary.receivableOutstanding}
-					description="Parcelas abertas a seu favor"
-					accentClassName="border-teal-300/15 bg-teal-400/8 text-teal-300"
-				/>
-				<MetricCard
-					icon={ArrowUpRight}
-					label="Saldo a pagar"
-					value={dashboard.summary.payableOutstanding}
-					description="Parcelas que você precisa pagar"
-					accentClassName="border-cyan-300/15 bg-cyan-400/8 text-cyan-300"
-				/>
+			<div className="mt-7 grid gap-4 sm:grid-cols-2">
 				<MetricCard
 					icon={Landmark}
 					label="Total emprestado"
-					value={dashboard.summary.lentPrincipal}
-					description="Principal formalizado como credor"
+					value={dashboard.summary.lentContractTotal}
+					description="Soma dos contratos concedidos, já com os juros previstos."
 					accentClassName="border-emerald-300/15 bg-emerald-400/8 text-emerald-300"
 				/>
 				<MetricCard
 					icon={CircleDollarSign}
-					label="Total tomado"
-					value={dashboard.summary.borrowedPrincipal}
-					description={`${dashboard.summary.activeLoanCount} empréstimo(s) em aberto`}
+					label="Total contratado"
+					value={dashboard.summary.borrowedContractTotal}
+					description="Soma dos contratos recebidos, já com os juros previstos."
 					accentClassName="border-cyan-300/15 bg-cyan-400/8 text-cyan-300"
 				/>
 			</div>
