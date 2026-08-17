@@ -97,11 +97,8 @@ export async function getDashboard() {
 	const cashFlow = new Map(
 		monthKeys.map((month) => [month, { month, receivable: 0, payable: 0 }]),
 	);
-	const activeLoans = loansResult.data.filter(
-		(loan) => loan.status !== "cancelled" && loan.status !== "paid",
-	);
-	let lentPrincipal = 0;
-	let borrowedPrincipal = 0;
+	let lentContractTotal = 0;
+	let borrowedContractTotal = 0;
 	let receivableOutstanding = 0;
 	let payableOutstanding = 0;
 	const outstandingInstallments = [];
@@ -113,9 +110,9 @@ export async function getDashboard() {
 
 		const isLender = loan.lender_id === currentUserId;
 		if (isLender) {
-			lentPrincipal += loan.principal_amount;
+			lentContractTotal += loan.total_amount;
 		} else {
-			borrowedPrincipal += loan.principal_amount;
+			borrowedContractTotal += loan.total_amount;
 		}
 
 		if (loan.status === "paid") {
@@ -212,11 +209,10 @@ export async function getDashboard() {
 	return {
 		asOfDate,
 		summary: {
-			lentPrincipal: money(lentPrincipal),
-			borrowedPrincipal: money(borrowedPrincipal),
+			lentContractTotal: money(lentContractTotal),
+			borrowedContractTotal: money(borrowedContractTotal),
 			receivableOutstanding: money(receivableOutstanding),
 			payableOutstanding: money(payableOutstanding),
-			activeLoanCount: activeLoans.length,
 		},
 		attention: {
 			overdueCount: overdueInstallments.length,
