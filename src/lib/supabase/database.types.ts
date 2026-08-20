@@ -179,6 +179,9 @@ export type Database = {
           accepted_proposal_id: string
           activated_at: string
           borrower_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
           created_at: string
           first_due_date: string
           id: string
@@ -195,6 +198,9 @@ export type Database = {
           accepted_proposal_id: string
           activated_at?: string
           borrower_id: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
           created_at?: string
           first_due_date: string
           id?: string
@@ -211,6 +217,9 @@ export type Database = {
           accepted_proposal_id?: string
           activated_at?: string
           borrower_id?: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          cancelled_by?: string | null
           created_at?: string
           first_due_date?: string
           id?: string
@@ -241,6 +250,13 @@ export type Database = {
           {
             foreignKeyName: "loans_lender_id_fkey"
             columns: ["lender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loans_cancelled_by_fkey"
+            columns: ["cancelled_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -426,6 +442,9 @@ export type Database = {
           accepted_proposal_id: string
           activated_at: string
           borrower_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
           created_at: string
           first_due_date: string
           id: string
@@ -461,6 +480,34 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "loan_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cancel_loan: {
+        Args: { p_loan_id: string; p_reason?: string }
+        Returns: {
+          accepted_proposal_id: string
+          activated_at: string
+          borrower_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          cancelled_by: string | null
+          created_at: string
+          first_due_date: string
+          id: string
+          installment_count: number
+          interest_rate: number
+          lender_id: string
+          loan_request_id: string
+          paid_at: string | null
+          principal_amount: number
+          status: Database["public"]["Enums"]["loan_status"]
+          total_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "loans"
           isOneToOne: true
           isSetofReturn: false
         }

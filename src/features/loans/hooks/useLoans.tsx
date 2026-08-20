@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import type { CancelLoanSchema } from "../schemas/loans.schemas";
 import {
+	cancelLoanFn,
 	getLoanByIdFn,
 	getLoansFn,
 	getReceivedLoansHistoryFn,
@@ -53,5 +55,19 @@ export function useGetLoansHistory(direction: LoanDirection, enabled: boolean) {
 		loansHistory: query.data ?? [],
 		isLoading: query.isLoading,
 		isError: query.isError,
+	};
+}
+
+export function useCancelLoan() {
+	const queryClient = useQueryClient();
+	const cancelLoan = useServerFn(cancelLoanFn);
+	const mutation = useMutation({
+		mutationFn: (data: CancelLoanSchema) => cancelLoan({ data }),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: loansQueryKey }),
+	});
+
+	return {
+		cancelLoan: mutation.mutateAsync,
+		isLoading: mutation.isPending,
 	};
 }

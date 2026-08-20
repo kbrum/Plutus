@@ -97,6 +97,7 @@ type HistoryItem = {
 	status: string;
 	createdAt: string;
 	description?: string | null;
+	descriptionLabel?: string;
 	details?: string;
 };
 
@@ -113,6 +114,35 @@ const statusFilterOptions = [
 	{ value: "superseded", label: "Substituídos" },
 	{ value: "paid", label: "Quitados" },
 ] as const;
+
+function ExpandableDescription({
+	label,
+	children,
+}: {
+	label?: string;
+	children: string;
+}) {
+	const [expanded, setExpanded] = useState(false);
+	const isLong = children.length > 140;
+
+	return (
+		<div className="mt-3 border-l-2 border-slate-700 pl-3 text-sm leading-6 text-slate-500">
+			{label ? (
+				<p className="mb-1 text-xs font-semibold text-slate-400">{label}</p>
+			) : null}
+			<p className={expanded ? undefined : "line-clamp-2"}>{children}</p>
+			{isLong ? (
+				<button
+					type="button"
+					className="mt-1 font-semibold text-teal-300 hover:text-teal-200 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/60"
+					onClick={() => setExpanded((current) => !current)}
+				>
+					{expanded ? "Ver menos" : "... ver mais"}
+				</button>
+			) : null}
+		</div>
+	);
+}
 
 export function LoanHistoryDialog() {
 	const [open, setOpen] = useState(false);
@@ -169,7 +199,10 @@ export function LoanHistoryDialog() {
 			amount: loan.principal_amount,
 			statusKey: loan.status,
 			status: loanStatusLabels[loan.status],
-			createdAt: loan.paid_at ?? loan.created_at,
+			createdAt: loan.cancelled_at ?? loan.paid_at ?? loan.created_at,
+			description: loan.cancellation_reason,
+			descriptionLabel:
+				loan.status === "cancelled" ? "Motivo do cancelamento" : undefined,
 			details: `${loan.interest_rate}% de juros · ${loan.installment_count} parcelas · Total ${currencyFormatter.format(loan.total_amount)}`,
 		})),
 	].sort(
@@ -324,9 +357,9 @@ export function LoanHistoryDialog() {
 									</div>
 
 									{item.description ? (
-										<p className="mt-3 border-l-2 border-slate-700 pl-3 text-sm leading-6 text-slate-500">
+										<ExpandableDescription label={item.descriptionLabel}>
 											{item.description}
-										</p>
+										</ExpandableDescription>
 									) : null}
 								</li>
 							);
