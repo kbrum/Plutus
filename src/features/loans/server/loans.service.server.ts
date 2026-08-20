@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "#/lib/supabase/client.server";
+import type { CancelLoanSchema } from "../schemas/loans.schemas";
 
 const loanSelect = `
 	id,
@@ -13,6 +14,9 @@ const loanSelect = `
 	status,
 	created_at,
 	paid_at,
+	cancelled_at,
+	cancelled_by,
+	cancellation_reason,
 	borrower:profiles!loans_borrower_id_fkey(display_name),
 	lender:profiles!loans_lender_id_fkey(display_name)
 `;
@@ -124,3 +128,17 @@ export async function getReceivedLoansHistory() {
 }
 
 export async function createLoan() {}
+
+export async function cancelLoan({ loanId, reason }: CancelLoanSchema) {
+	const { supabase } = await getCurrentUserId();
+	const { data, error } = await supabase.rpc("cancel_loan", {
+		p_loan_id: loanId,
+		p_reason: reason || undefined,
+	});
+
+	if (error) {
+		throw error;
+	}
+
+	return data;
+}

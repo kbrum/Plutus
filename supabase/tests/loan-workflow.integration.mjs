@@ -201,6 +201,53 @@ test("terceiro não pode aceitar, rejeitar ou excluir uma request", async () => 
 	assert.equal(request.status, "pending");
 });
 
+test("somente o credor cancela um empréstimo e preserva o motivo", async () => {
+	const loan = await createAcceptedLoan(8_000, 3);
+
+	const borrowerAttempt = await borrower.rpc("cancel_loan", {
+		p_loan_id: loan.id,
+		p_reason: "Tentativa do devedor",
+	});
+	assert.ok(borrowerAttempt.error);
+	assert.match(borrowerAttempt.error.message, /Somente o credor pode cancelar/);
+
+	const outsiderAttempt = await outsider.rpc("cancel_loan", {
+		p_loan_id: loan.id,
+		p_reason: null,
+	});
+	assert.ok(outsiderAttempt.error);
+	assert.match(outsiderAttempt.error.message, /Somente o credor pode cancelar/);
+
+	const cancellation = await lender.rpc("cancel_loan", {
+		p_loan_id: loan.id,
+		p_reason: "  Acordo encerrado entre as partes.  ",
+	});
+	assert.ifError(cancellation.error);
+	assert.equal(cancellation.data.status, "cancelled");
+	assert.equal(
+		cancellation.data.cancellation_reason,
+		"Acordo encerrado entre as partes.",
+	);
+	assert.equal(cancellation.data.cancelled_by, lenderId);
+	assert.ok(cancellation.data.cancelled_at);
+
+	const { data: installments, error: installmentsError } = await borrower
+		.from("installments")
+		.select("status")
+		.eq("loan_id", loan.id);
+	assert.ifError(installmentsError);
+	assert.ok(
+		installments.every((installment) => installment.status === "cancelled"),
+	);
+
+	const repeatedAttempt = await lender.rpc("cancel_loan", {
+		p_loan_id: loan.id,
+		p_reason: null,
+	});
+	assert.ok(repeatedAttempt.error);
+	assert.match(repeatedAttempt.error.message, /não está disponível/);
+});
+
 test("duas aceitações concorrentes formalizam somente um empréstimo", async () => {
 	const requestId = await createRequest(25_000);
 	const acceptedRequest = await lender.rpc("accept_loan_request", {

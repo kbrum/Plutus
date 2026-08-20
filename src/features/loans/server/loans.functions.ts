@@ -1,6 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createLoanSchema, loanIdSchema } from "../schemas/loans.schemas";
 import {
+	cancelLoanSchema,
+	createLoanSchema,
+	loanIdSchema,
+} from "../schemas/loans.schemas";
+import {
+	cancelLoan,
 	createLoan,
 	getLoanById,
 	getLoans,
@@ -31,3 +36,9 @@ export const createLoanFn = createServerFn({
 })
 	.validator(createLoanSchema)
 	.handler(() => createLoan());
+
+export const cancelLoanFn = createServerFn({
+	method: "POST",
+})
+	.validator(cancelLoanSchema)
+	.handler(({ data }) => cancelLoan(data));
